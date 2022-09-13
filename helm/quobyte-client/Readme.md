@@ -1,1 +1,0 @@
-# quobyte-client Helm Chart

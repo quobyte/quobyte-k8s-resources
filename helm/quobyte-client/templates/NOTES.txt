@@ -1,0 +1,9 @@
+
+Welcome to Quobyte :)
+
+You just installed the Quobyte client on every node of your 
+cluster (using a daemonset). 
+To provision and mount Quobyte storage you will also need to 
+install the Quobyte CSI driver.
+
+

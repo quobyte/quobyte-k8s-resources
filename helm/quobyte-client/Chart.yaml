@@ -1,0 +1,9 @@
+apiVersion: v2
+name: quobyte-client
+description: Install Quobyte client software to your cluster
+
+type: application
+
+version: 0.1.2
+
+appVersion: 3.0

@@ -1,0 +1,9 @@
+quobyte:
+  clientMountPoint: /home/quobyte/mounts
+  volumeMountPoint: /home/quobyte
+  clientImage: quay.io/quobyte/quobyte-client:3 
+  clientVersion: 3
+  enableAccessKeys: true 
+  registry: quobyte-reg-0.quobyte.default.svc.cluster.local,quobyte-reg-1.quobyte.default.svc.cluster.local,quobyte-reg-2.quobyte.default.svc.cluster.local
+
+

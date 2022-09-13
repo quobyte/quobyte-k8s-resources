@@ -13,7 +13,7 @@ quobyte` to see the charts.
 
 For example to install the quobyte client chart:
 
-    helm install my-persistent-storage quobyte/quobyte-client
+    helm install my-storage-client quobyte/quobyte-client
 
 To uninstall the chart:
 

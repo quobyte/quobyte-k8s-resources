@@ -20,10 +20,11 @@ quobyte:
 
 You can inspect the values.yaml for other values to modify, but default should work.
 
-The helm chart can then be installed as usual:
+This Helm Chart can be installed as usual:
 
 ``` 
 helm repo add quobyte https://quobyte.github.io/quobyte-k8s-resources/helm-charts
+helm repo update
 helm install my-storage-cluster quobyte/quobyte-cluster
 ``` 
 

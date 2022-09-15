@@ -9,5 +9,9 @@ This example contains
 The Storage Class will need a secret with valid Quobyte credentials; these 
 credentials are kept in a separate name space.
 
+To apply the examples a Quobyte user/password needs to be configured in 
 
+02_secret_quobyte.yaml
+
+This user/password needs to be base64 encoded.
 

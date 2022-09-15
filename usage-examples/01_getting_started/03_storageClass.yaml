@@ -1,0 +1,24 @@
+allowVolumeExpansion: true
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: quobyte-default
+parameters:
+  # The following requires existing namespace "quobyte" + secret "quobyte-secret"
+  csi.storage.k8s.io/controller-expand-secret-name: quobyte-secret
+  csi.storage.k8s.io/controller-expand-secret-namespace: quobyte
+  csi.storage.k8s.io/provisioner-secret-name: quobyte-secret
+  csi.storage.k8s.io/provisioner-secret-namespace: quobyte
+  csi.storage.k8s.io/node-publish-secret-name: quobyte-secret
+  csi.storage.k8s.io/node-publish-secret-namespace: quobyte
+
+  createQuota: "true"
+  accessMode: "755"
+
+  # A Quobyte tenant with that name must exist. 
+  quobyteTenant: "My Tenant" 
+  # You can set labels here that are accessible in Quobyte
+  # as key:value pairs.
+  labels: "usagetype:exploringSpace"
+provisioner: csi.quobyte.com
+

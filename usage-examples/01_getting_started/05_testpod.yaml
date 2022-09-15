@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: consumer-pod
+spec:
+  volumes:
+    - name: consumer-storage
+      persistentVolumeClaim:
+        claimName: quobyte-default-pvc 
+  containers:
+    - name: consumer-container
+      image: nginx
+      ports:
+        - containerPort: 80
+          name: "http-server"
+      volumeMounts:
+        - mountPath: "/usr/share/nginx/html"
+          name: consumer-storage
+
+

@@ -17,4 +17,4 @@ For example to install the quobyte client chart:
 
 To uninstall the chart:
 
-    helm delete my-<chart-name>
+    helm delete my-storage-client

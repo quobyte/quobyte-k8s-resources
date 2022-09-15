@@ -1,0 +1,6 @@
+apiVersion: v2
+name: quobyte-cluster
+description: Install a Quobyte storage cluster
+type: application
+version: 0.1.3
+appVersion: 3.6.0

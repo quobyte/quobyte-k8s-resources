@@ -3,7 +3,7 @@ entries:
   quobyte-client:
   - apiVersion: v2
     appVersion: "3"
-    created: "2022-09-15T10:19:40.510090855+02:00"
+    created: "2022-09-15T11:32:05.097967097+02:00"
     description: Install Quobyte client software to your cluster
     digest: 27318199014d0243054d9ee71944ff109556d487a5fd82f20845b5bebdb68517
     name: quobyte-client
@@ -14,7 +14,7 @@ entries:
   quobyte-cluster:
   - apiVersion: v2
     appVersion: 3.6.0
-    created: "2022-09-15T10:19:40.51058565+02:00"
+    created: "2022-09-15T11:32:05.098442859+02:00"
     description: Install a Quobyte storage cluster
     digest: 1853893a418b81ebe221d39fa58e758987aa0c00c286180712b58aa4e0efcfcc
     name: quobyte-cluster
@@ -22,4 +22,14 @@ entries:
     urls:
     - https://quobyte.github.io/quobyte-k8s-resources/helm-charts/quobyte-cluster-0.1.3.tgz
     version: 0.1.3
-generated: "2022-09-15T10:19:40.509686396+02:00"
+  quobyte-csi:
+  - apiVersion: v1
+    appVersion: v1.8.3
+    created: "2022-09-15T11:32:05.099192774+02:00"
+    description: Quobyte CSI Helm chart
+    digest: 91698fe3b362d8a8961057c0486501406d667a17b01d43a9410f6fa1c4e0b946
+    name: quobyte-csi
+    urls:
+    - https://quobyte.github.io/quobyte-k8s-resources/helm-charts/quobyte-csi-1.8.4.tgz
+    version: 1.8.4
+generated: "2022-09-15T11:32:05.097587256+02:00"

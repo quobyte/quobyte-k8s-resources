@@ -8,7 +8,7 @@ This repository collects all resources needed to
 ## Consuming Storage
 
 To access a Quobyte cluster from Kubernetes 
-quobyte-client and quobyte-csi needs to be deployed:
+"quobyte-client" and "quobyte-csi" needs to be deployed:
 
 ```
 helm repo add quobyte https://quobyte.github.io/quobyte-k8s-resources/helm-charts

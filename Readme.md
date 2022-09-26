@@ -13,6 +13,8 @@ helm repo add quobyte https://quobyte.github.io/quobyte-k8s-resources/helm-chart
 helm install my-storage-cluster quobyte/quobyte-cluster
 ```
 
+Please have a look at [requirements document](Requirements.md) if you consider to run Quobyte for production workloads.
+
 ## Consuming Storage
 
 To access a Quobyte cluster from Kubernetes 

@@ -23,9 +23,9 @@ quobyte:
   # storageProvisioner: kubernetes.io/aws-ebs 
   storageProvisioner: kubernetes.io/gce-pd
   
-  # Minimum number of replicas per Quobyte services, minimum is 4.
-  # Your nodepool must have at least 4 nodes.
-  replicas: 4
+  # Minimum number of replicas per Quobyte services, minimum is 3.
+  # Your nodepool must have at least 3 nodes.
+  replicas: 3
   
   # Data disks attached to each Quobyte data services, minimum is one data disk,
   # maximum is 16. Please note that adding more data disks will increase capacity,

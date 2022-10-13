@@ -1,6 +1,5 @@
 ---
-# this is a work around to enable pod name resolution
-# It should not work in theory, but we will see
+# Quobyte registry service. 
 apiVersion: v1
 kind: Service
 metadata:

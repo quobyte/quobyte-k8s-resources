@@ -8,7 +8,7 @@ spec:
     matchLabels:
       app: quobyte-reg # has to match .spec.template.metadata.labels
   serviceName: "quobyte"
-  replicas: {{ .Values.quobyte.replicas }} # by default is 4 
+  replicas: {{ .Values.quobyte.replicas }}  
   template:
     metadata:
       labels:

@@ -10,6 +10,9 @@ Once Helm has been set up correctly, add the repo as follows:
 If you had already added this repo earlier, run `helm repo update` to retrieve
 the latest versions of the packages.  You can then run `helm search repo
 quobyte` to see the charts.
+To see all available chart values for a specific chart:
+
+    helm show values quobyte/quobyte-<myChart>
 
 For example to install the quobyte client chart:
 
@@ -18,3 +21,4 @@ For example to install the quobyte client chart:
 To uninstall the chart:
 
     helm delete my-storage-client
+

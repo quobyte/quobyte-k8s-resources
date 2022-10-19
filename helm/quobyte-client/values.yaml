@@ -1,9 +1,24 @@
 quobyte:
-  clientMountPoint: /home/quobyte/mounts
-  volumeMountPoint: /home/quobyte
-  clientImage: quay.io/quobyte/quobyte-client:3 
-  clientVersion: 3
-  enableAccessKeys: true 
-  registry: quobyte-reg-0.quobyte.default.svc.cluster.local,quobyte-reg-1.quobyte.default.svc.cluster.local,quobyte-reg-2.quobyte.default.svc.cluster.local
+  
+  # Using access keys needs a valid Quobyte license
+  # See also: 
+  # https://docs.quobyte.com/docs/16/latest/access_keys.html#kubernetes-csi
+  enableAccessKeys: "true"
+  
+  # Container image used 
+  clientImage: "quay.io/quobyte/quobyte-client:3" 
+  # Refers to the Quobyte major version. Just sets a label.
+  clientVersion: "3"
 
+  # The target directory where Quobyte client mounts all Quobyte volumes. 
+  clientMountPoint: "/home/quobyte/mounts"
+  # VolumeMountPoint is related to clientMountPoint, but one directory level below. 
+  volumeMountPoint: "/home/quobyte"  
+  # Registry service address of a matching Quobyte cluster. Default is the k8s service name 
+  # of a Quobyte cluster installed in k8s.
+  # Can be set to a string of comma-separated DNS A-records or IP addressses or 
+  # a SRV-record  
+  #registry: arecord1.example.com,arecord2.example.com,arecord3.example.com
+  #registry: 192.168.2.1,192.168.2.2,192.168.2.3
+  registry: _quobyte._tcp.quobyte.default.svc.cluster.local # Assumes Quobyte services are deployed in namespace "default".
 

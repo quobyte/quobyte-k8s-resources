@@ -15,25 +15,25 @@ spec:
         prometheus.io/port: '55000'
       labels:
         role: client
-        version: "{{ .Values.quobyte.clientVersion }}"
+        version: {{ .Values.quobyte.clientVersion | quote }}
     spec:
       containers:
       - name: quobyte-client
-        image: {{ .Values.quobyte.clientImage }} 
+        image: {{ .Values.quobyte.clientImage | quote }} 
         imagePullPolicy: Always
         env:
           - name: QUOBYTE_CLIENT_LOG_LEVEL
             value: INFO
           - name: QUOBYTE_REGISTRY
             # Your Quobyte registry endpoint
-            value:  "{{ .Values.quobyte.registry }}"
+            value:  {{ .Values.quobyte.registry | quote }}
           - name: QUOBYTE_MOUNT_POINT
             # Corresponding volume mount must be one directory below this path
             # Example volumeMount is : /mnt/quobyte and clientMountPoint is /mnt/quobyte/mounts
-            value:  "{{ .Values.quobyte.clientMountPoint }}"
+            value:  {{ .Values.quobyte.clientMountPoint | quote }}
           # Enabling access keys requires Quobyte version 3.0 or later
           - name: ENABLE_ACCESS_KEYS
-            value: "{{ .Values.quobyte.enableAccessKeys }}"  # to enable, set it to true
+            value: {{ .Values.quobyte.enableAccessKeys | quote }}  
           - name: NODENAME
             valueFrom:
               fieldRef:
@@ -66,7 +66,7 @@ spec:
               umount -l ${QUOBYTE_MOUNT_POINT}
             fi
             mkdir -p /root/.quobyte ${QUOBYTE_MOUNT_POINT} 
-            if find "${QUOBYTE_MOUNT_POINT}/mounts" -mindepth 1 -print -quit 2>/dev/null | grep -q .; then
+            if find "${QUOBYTE_MOUNT_POINT}/" -mindepth 1 -print -quit 2>/dev/null | grep -q .; then
                 echo "POLLUTED MOUNT POINT DETECTED! Cannot use $QUOBYTE_MOUNT_POINT as a mount point."
                 echo "Please remove all files and directories from $QUOBYTE_MOUNT_POINT and "
                 echo "run 'chattr +i $QUOBYTE_MOUNT_POINT' to prevent future mount point pollution."
@@ -85,7 +85,7 @@ spec:
           privileged: true
         volumeMounts:
           - name: quobyte-mount
-            mountPath: {{ .Values.quobyte.volumeMountPoint }}
+            mountPath: {{ .Values.quobyte.volumeMountPoint | quote }}
             mountPropagation: Bidirectional
           - name: minidumps-dir
             mountPath: /tmp/minidumps
@@ -96,7 +96,7 @@ spec:
       volumes:
       - name: quobyte-mount
         hostPath:
-          path: {{ .Values.quobyte.volumeMountPoint }}
+          path: {{ .Values.quobyte.volumeMountPoint | quote }}
       - name: minidumps-dir
         hostPath:
           path: /var/lib/quobyte/.minidumps

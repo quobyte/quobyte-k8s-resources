@@ -27,3 +27,8 @@ helm install my-storage-csi quobyte/quobyte-csi
 ```
 
 
+To see all available chart values for a specific chart:
+
+```
+helm show values quobyte/quobyte-<myChart>
+```

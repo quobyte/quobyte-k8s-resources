@@ -13,15 +13,19 @@ quobyte:
   lbinternal: false 
   
   # Configuration for the persistent disks used by the Quobyte services.
-  # This is *not* the configuration for the CSI plugin and the storage classes
-  # to consume the Quobyte storage!
-  
-  # Name depends on the cloud environment, e.g. pd-ssd for Google Kubernetes Engine
-  # flashStorage: gp2 # AWS general purpose SSD
-  flashStorage: pd-ssd
-  # Storage provider depending to the cloud environment
-  # storageProvisioner: kubernetes.io/aws-ebs 
-  storageProvisioner: kubernetes.io/gce-pd
+  # Storage provisioner depending to the cloud environment:
+  # storageProvisioner: "kubernetes.io/aws-ebs"
+  # storageProvisioner: "kubernetes.io/azure-disk" 
+  storageProvisioner: "kubernetes.io/gce-pd"
+  # Storage type, also depending on the used environment:
+  # flashStorage: "gp2"           # AWS general purpose SSD
+  # flashStorage: "Standard_LRS"  # Azure "Standard Locally Redundant Storage"
+  # flashStorage: "pd-ssd"        # GCE SSD storage
+  flashStorage: "pd-ssd"
+  # See also: 
+  # https://kubernetes.io/docs/concepts/storage/storage-classes/#gce-pd
+  # https://kubernetes.io/docs/concepts/storage/storage-classes/#aws-ebs
+  # https://learn.microsoft.com/en-us/rest/api/storagerp/srp_sku_types
   
   # Minimum number of replicas per Quobyte services, minimum is 3.
   # Your nodepool must have at least 3 nodes.

@@ -137,12 +137,11 @@ spec:
       accessModes: [ "ReadWriteOnce" ]
       resources:
         requests:
-          storage: 10Gi
+          storage: 1Gi
   - metadata:
       name: registry
     spec:
       accessModes: [ "ReadWriteOnce" ]
-      storageClassName: "faster"
       resources:
         requests:
           storage: 25Gi

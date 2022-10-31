@@ -10,11 +10,13 @@ storage devices. A sample "values.yaml" looks like this:
 ``` 
 quobyte:
   # Name depends on the cloud environment, e.g. pd-ssd for Google Kubernetes Engine
-  # flashStorage: gp2 # AWS general purpose SSD
-  flashStorage: pd-ssd
+  # flashStorage: "gp2" # AWS general purpose SSD
+  # flashStorage: "Standard_LRS"  # Azure "Standard Locally Redundant Storage"
+  flashStorage: "pd-ssd"
   # Storage provider depending to the cloud environment
-  # storageProvisioner: kubernetes.io/aws-ebs 
-  storageProvisioner: kubernetes.io/gce-pd
+  # storageProvisioner: "kubernetes.io/aws-ebs"
+  # storageProvisioner: "kubernetes.io/azure-disk" 
+  storageProvisioner: "kubernetes.io/gce-pd"
 
 ``` 
 

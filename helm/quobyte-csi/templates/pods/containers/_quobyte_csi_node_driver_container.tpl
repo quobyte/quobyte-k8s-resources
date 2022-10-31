@@ -1,9 +1,9 @@
-{{- define "quobyte-csi.nodePluginContainer" }}
-- name: quobyte-csi-plugin
+{{- define "quobyte-csi-driver.nodeDriverContainer" }}
+- name: quobyte-csi-driver
 {{- if .Values.resources }}
-{{- if .Values.resources.nodePluginContainer }}
+{{- if .Values.resources.nodeDriverContainer }}
   resources: 
-{{ toYaml .Values.resources.nodePluginContainer | indent 4 }}
+{{ toYaml .Values.resources.nodeDriverContainer | indent 4 }}
 {{- end }}
 {{- end }}
   securityContext:
@@ -23,7 +23,8 @@
     - "--enable_access_key_mounts={{ .Values.quobyte.enableAccessKeyMounts }}"
     - "--quobyte_version={{ .Values.quobyte.version }}"
     - "--immediate_erase={{ .Values.quobyte.immediateErase }}"
-    - "--use_k8s_namespace_as_tenant={{ .Values.quobyte.useK8SNamespaceAsTenant }}" 
+    - "--use_k8s_namespace_as_tenant={{ .Values.quobyte.useK8SNamespaceAsTenant }}"
+    - "--role=node_driver"
   env:
     - name: NODE_ID
       valueFrom:

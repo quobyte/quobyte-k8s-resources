@@ -54,7 +54,7 @@ spec:
           - name: LIMIT_MAX_PROCESSES
             value: "{{ .Values.quobyte.maxprocs }}"
           - name: QUOBYTE_S3_HOSTNAME
-            value: "{{ .Values.s3.dnsname }}"
+            value: "{{ .Values.quobyte.s3.dnsname }}"
         volumeMounts:
           - name: config-s3
             mountPath: /etc/quobyte
@@ -104,7 +104,7 @@ spec:
           - name: QUOBYTE_SERVICE
             value: s3
           - name: QUOBYTE_S3_HOSTNAME
-            value: "{{ .Values.s3.dnsname }}"
+            value: "{{ .Values.quobyte.s3.dnsname }}"
         ports:
         - containerPort: 80
           name: quobyte-s3

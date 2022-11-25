@@ -67,7 +67,7 @@ quobyte:
   # infrastructure which points to the machine or machines running the S3 Proxy. 
   # So at a minimum, there are two CNAME records that point to a machine running the S3 proxy
   s3:
-    enabled: false
+    enabled: false 
     dnsname: s3.example.com
   
   webconsoleport: 8080

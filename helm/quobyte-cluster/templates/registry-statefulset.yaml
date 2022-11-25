@@ -40,6 +40,8 @@ spec:
             value: "7861"
           - name: QUOBYTE_API_PORT
             value: "7860" 
+          - name: QUOBYTE_S3_PORT
+            value: "8484" 
           - name: QUOBYTE_SERVICE
             value: registry
           - name: CLOUD_INSTALL
@@ -96,6 +98,8 @@ spec:
             value: "7861"
           - name: QUOBYTE_API_PORT
             value: "7860" 
+          - name: QUOBYTE_S3_PORT
+            value: "8484" 
           - name: QUOBYTE_SERVICE
             value: registry
           - name: CLOUD_INSTALL

@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: quobyte-client-ds
-  namespace: default
+  namespace: {{ $.Release.Namespace }}
 spec:
   selector:
     matchLabels:
@@ -31,6 +31,8 @@ spec:
             # Corresponding volume mount must be one directory below this path
             # Example volumeMount is : /mnt/quobyte and clientMountPoint is /mnt/quobyte/mounts
             value:  {{ .Values.quobyte.clientMountPoint | quote }}
+          - name: QUOBYTE_CLIENT_OPTS
+            value: {{ .Values.quobyte.clientOptions | quote }}
           # Enabling access keys requires Quobyte version 3.0 or later
           - name: ENABLE_ACCESS_KEYS
             value: {{ .Values.quobyte.enableAccessKeys | quote }}  
@@ -54,6 +56,8 @@ spec:
           httpGet:
             port: 55000
             path: /
+        resources:
+          {{- toYaml .Values.resources | nindent 12 }}
         command:
           - /bin/bash
           - -xec
@@ -77,7 +81,7 @@ spec:
                 echo "WARNING: The local filesystem does not support IMMUTABLE flag. Mount point pollution is possible."
               /usr/bin/mount.quobyte --hostname ${NODENAME} \
                 --http-port 55000 -f \
-                -d ${QUOBYTE_CLIENT_LOG_LEVEL} -l /dev/stdout ${OPTS} \
+                -d ${QUOBYTE_CLIENT_LOG_LEVEL} -l /dev/stdout ${OPTS} ${QUOBYTE_CLIENT_OPTS} \
                 --minidump-path /tmp/minidumps --allow-minidump-upload \
                 ${QUOBYTE_REGISTRY}/ ${QUOBYTE_MOUNT_POINT} ${ENABLE_ACCESS_CONTEXTS}
             fi
@@ -93,6 +97,19 @@ spec:
           preStop:
             exec:
               command: ["/bin/bash", "-xc", "umount -l ${QUOBYTE_MOUNT_POINT}"]
+      hostNetwork: {{ .Values.hostNetwork }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       volumes:
       - name: quobyte-mount
         hostPath:

@@ -16,7 +16,7 @@ spec:
         timestamp: "{{ now }}"
     spec:
       terminationGracePeriodSeconds: 10
-      hostNetwork: true
+      hostNetwork: {{ .Values.hostNetwork }}
       dnsPolicy: ClusterFirstWithHostNet
       containers:
       - name: quobyte-api

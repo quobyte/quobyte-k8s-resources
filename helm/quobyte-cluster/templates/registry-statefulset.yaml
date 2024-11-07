@@ -18,7 +18,7 @@ spec:
     spec:
       subdomain: "quobyte"
       terminationGracePeriodSeconds: 10
-      hostNetwork: true
+      hostNetwork: {{ .Values.hostNetwork }}
       dnsPolicy: ClusterFirstWithHostNet
       initContainers:
       - name: quobyte-reg-pre 

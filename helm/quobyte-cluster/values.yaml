@@ -77,3 +77,6 @@ quobyte:
   maxopenfiles: "1048576"
   # Maximum number of processes, must be set to 16,000 or more.
   maxprocs: "16384"
+
+# Quobyte-independent settings:    
+hostNetwork: false

@@ -32,3 +32,9 @@ To see all available chart values for a specific chart:
 ```
 helm show values quobyte/quobyte-<myChart>
 ```
+
+To get the most recent helm charts:
+
+```
+helm repo update quobyte
+```

@@ -2,8 +2,8 @@ apiVersion: v2
 appVersion: "v2.0.2"
 description: Quobyte CSI Helm Chart Deployment
 name: quobyte-csi
-version: "1.8.8"
-kubeVersion: "1.22-0 - 1.31-0"
+version: "1.8.9"
+kubeVersion: "1.22-0 - 1.33-0"
 icon: https://quobyte.github.io/quobyte-k8s-resources/images/quobyte.png 
 keywords:
 - Quobyte

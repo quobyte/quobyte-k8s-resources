@@ -6,9 +6,9 @@ quobyte:
   enableAccessKeys: "true"
   
   # Container image used 
-  clientImage: "quay.io/quobyte/quobyte-client:3" 
+  clientImage: "quay.io/quobyte/quobyte-client:4" 
   # Refers to the Quobyte major version. Just sets a label.
-  clientVersion: "3"
+  clientVersion: "4"
 
   # The target directory where Quobyte client mounts all Quobyte volumes. 
   clientMountPoint: "/home/quobyte/mounts"

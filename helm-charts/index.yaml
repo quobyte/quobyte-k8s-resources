@@ -7,7 +7,32 @@ entries:
       catalog.cattle.io/release-name: quobyte-client
     apiVersion: v2
     appVersion: "4"
-    created: "2025-11-26T13:25:52.277991255+01:00"
+    created: "2025-11-26T13:45:51.866203432+01:00"
+    description: Quobyte Client Helm Chart Deployment
+    digest: 78159126e4e897a31fbd3ef12e1676e837535d41ac9666cc37b069b0b9c9c858
+    icon: https://quobyte.github.io/quobyte-k8s-resources/images/quobyte.png
+    keywords:
+    - quobyte
+    - storage
+    - client
+    - pvc
+    - pv
+    - mount
+    kubeVersion: 1.20-0 - 1.34-0
+    name: quobyte-client
+    sources:
+    - https://github.com/quobyte/quobyte-k8s-resources
+    type: application
+    urls:
+    - https://quobyte.github.io/quobyte-k8s-resources/helm-charts/quobyte-client-0.3.0.tgz
+    version: 0.3.0
+  - annotations:
+      catalog.cattle.io/certified: partner
+      catalog.cattle.io/display-name: Quobyte Client Deployment
+      catalog.cattle.io/release-name: quobyte-client
+    apiVersion: v2
+    appVersion: "4"
+    created: "2025-11-26T13:45:51.865933881+01:00"
     description: Quobyte Client Helm Chart Deployment
     digest: 6c5ee3c42c047fb3b11495baec9bcbb201e415879bf829f6e3133058f1b8c84e
     icon: https://quobyte.github.io/quobyte-k8s-resources/images/quobyte.png
@@ -32,7 +57,7 @@ entries:
       catalog.cattle.io/release-name: quobyte-client
     apiVersion: v2
     appVersion: "3"
-    created: "2025-11-26T13:25:52.277719794+01:00"
+    created: "2025-11-26T13:45:51.865657038+01:00"
     description: Quobyte Client Helm Chart Deployment
     digest: 3b3a97494544780c30abed89c1b221d5e21c71406e66834030ea29fab23cc9bc
     icon: https://quobyte.github.io/quobyte-k8s-resources/images/quobyte.png
@@ -57,7 +82,7 @@ entries:
       catalog.cattle.io/release-name: quobyte-client
     apiVersion: v2
     appVersion: "3"
-    created: "2025-11-26T13:25:52.27744352+01:00"
+    created: "2025-11-26T13:45:51.865390454+01:00"
     description: Quobyte Client Helm Chart Deployment
     digest: acc0c850911d25605b712530a6a9414164c430287e528b4a4d53b6ab0a7ba82f
     icon: https://quobyte.github.io/quobyte-k8s-resources/images/quobyte.png
@@ -82,7 +107,7 @@ entries:
       catalog.cattle.io/release-name: quobyte-client
     apiVersion: v2
     appVersion: "3"
-    created: "2025-11-26T13:25:52.277123392+01:00"
+    created: "2025-11-26T13:45:51.865127711+01:00"
     description: Quobyte Client Helm Chart Deployment
     digest: 8d01148bfd5cf577cc19f815d86fab42c37053abefa2823681261b1307bd2c1a
     icon: https://quobyte.github.io/quobyte-k8s-resources/images/quobyte.png
@@ -107,7 +132,7 @@ entries:
       catalog.cattle.io/release-name: quobyte-client
     apiVersion: v2
     appVersion: "3"
-    created: "2025-11-26T13:25:52.276755031+01:00"
+    created: "2025-11-26T13:45:51.864892671+01:00"
     description: Quobyte Client Helm Chart Deployment
     digest: bb633a0de371ba815716b7c38c211e53316540dd68ac8441c88d09493503879f
     icon: https://quobyte.github.io/quobyte-k8s-resources/images/quobyte.png
@@ -132,7 +157,7 @@ entries:
       catalog.cattle.io/release-name: quobyte-client
     apiVersion: v2
     appVersion: "3"
-    created: "2025-11-26T13:25:52.276452598+01:00"
+    created: "2025-11-26T13:45:51.864649784+01:00"
     description: Quobyte Client Helm Chart Deployment
     digest: 8dd5d8b3d9fdf3857b156d580d48453375b608f192fdbc423ef9848845d7920b
     icon: https://quobyte.github.io/quobyte-k8s-resources/images/quobyte.png
@@ -157,7 +182,7 @@ entries:
       catalog.cattle.io/release-name: quobyte-client
     apiVersion: v2
     appVersion: "3"
-    created: "2025-11-26T13:25:52.276153001+01:00"
+    created: "2025-11-26T13:45:51.86440492+01:00"
     description: Quobyte Client Helm Chart Deployment
     digest: b87f4afe46a37994590758a54b2aa07754319974dd245403fa76643971e42495
     icon: https://quobyte.github.io/quobyte-k8s-resources/images/quobyte.png
@@ -178,7 +203,7 @@ entries:
     version: 0.1.3
   - apiVersion: v2
     appVersion: "3"
-    created: "2025-11-26T13:25:52.275863835+01:00"
+    created: "2025-11-26T13:45:51.864148404+01:00"
     description: Install Quobyte client software to your cluster
     digest: 27318199014d0243054d9ee71944ff109556d487a5fd82f20845b5bebdb68517
     name: quobyte-client
@@ -193,7 +218,7 @@ entries:
       catalog.cattle.io/release-name: quobyte-cluster
     apiVersion: v2
     appVersion: "4"
-    created: "2025-11-26T13:25:52.284107249+01:00"
+    created: "2025-11-26T13:45:51.87225244+01:00"
     description: Quobyte Cluster Helm Chart Deployment
     digest: e4574bba9670f86d8704c6b09c2c07684ed39453d67c207d84b5e9d705d941d3
     home: https://www.quobyte.com
@@ -215,7 +240,7 @@ entries:
       catalog.cattle.io/release-name: quobyte-cluster
     apiVersion: v2
     appVersion: "4"
-    created: "2025-11-26T13:25:52.283673576+01:00"
+    created: "2025-11-26T13:45:51.871826515+01:00"
     description: Quobyte Cluster Helm Chart Deployment
     digest: e1666015c7b537e10e00f9ab9b6609c77698f194fae71a303f568dcc8292810c
     home: https://www.quobyte.com
@@ -237,7 +262,7 @@ entries:
       catalog.cattle.io/release-name: quobyte-cluster
     apiVersion: v2
     appVersion: "3"
-    created: "2025-11-26T13:25:52.283255622+01:00"
+    created: "2025-11-26T13:45:51.871394242+01:00"
     description: Quobyte Cluster Helm Chart Deployment
     digest: 23d27b5f0fc29eec9094466d0e3d069fc9b55220f9bdb27ee96980da49bf39b7
     home: https://www.quobyte.com
@@ -259,7 +284,7 @@ entries:
       catalog.cattle.io/release-name: quobyte-cluster
     apiVersion: v2
     appVersion: "3"
-    created: "2025-11-26T13:25:52.282832966+01:00"
+    created: "2025-11-26T13:45:51.870973473+01:00"
     description: Quobyte Cluster Helm Chart Deployment
     digest: 10aaabea89021341a56ca943ed9df77261221b35ce63a08fa068c0f2be884a1f
     home: https://www.quobyte.com
@@ -281,7 +306,7 @@ entries:
       catalog.cattle.io/release-name: quobyte-cluster
     apiVersion: v2
     appVersion: "3"
-    created: "2025-11-26T13:25:52.278844197+01:00"
+    created: "2025-11-26T13:45:51.867025372+01:00"
     description: Quobyte Cluster Helm Chart Deployment
     digest: 56bb9ef034e001a1cbceae66b77f639fece6f9812a9d3f19c7631cf72f3a0357
     home: https://www.quobyte.com
@@ -303,7 +328,7 @@ entries:
       catalog.cattle.io/release-name: quobyte-cluster
     apiVersion: v2
     appVersion: "3"
-    created: "2025-11-26T13:25:52.278412359+01:00"
+    created: "2025-11-26T13:45:51.866610845+01:00"
     description: Quobyte Cluster Helm Chart Deployment
     digest: e0b56fee255f2ac1c263951d054cb796605d2528319e5be48db94e033f676fa5
     home: https://www.quobyte.com
@@ -325,7 +350,7 @@ entries:
       catalog.cattle.io/release-name: quobyte-cluster
     apiVersion: v2
     appVersion: "3"
-    created: "2025-11-26T13:25:52.28240639+01:00"
+    created: "2025-11-26T13:45:51.870534246+01:00"
     description: Quobyte Cluster Helm Chart Deployment
     digest: 8687e277da29721123ee28139f0c055f88c4cd64e27ff871edf8dc9059602259
     home: https://www.quobyte.com
@@ -347,7 +372,7 @@ entries:
       catalog.cattle.io/release-name: quobyte-cluster
     apiVersion: v2
     appVersion: "3"
-    created: "2025-11-26T13:25:52.281984456+01:00"
+    created: "2025-11-26T13:45:51.870118421+01:00"
     description: Quobyte Cluster Helm Chart Deployment
     digest: 4397d9c7f3881e52fc2e4918b0c5112f53e615b086c17c735c7371ec6a82b92a
     home: https://www.quobyte.com
@@ -369,7 +394,7 @@ entries:
       catalog.cattle.io/release-name: quobyte-cluster
     apiVersion: v2
     appVersion: "3"
-    created: "2025-11-26T13:25:52.281548591+01:00"
+    created: "2025-11-26T13:45:51.869676812+01:00"
     description: Quobyte Cluster Helm Chart Deployment
     digest: 9154f45bc4948e09e67d72c4b292c28668861e427a8f5dc0e69a97417b8484a7
     home: https://www.quobyte.com
@@ -391,7 +416,7 @@ entries:
       catalog.cattle.io/release-name: quobyte-cluster
     apiVersion: v2
     appVersion: "3"
-    created: "2025-11-26T13:25:52.281134255+01:00"
+    created: "2025-11-26T13:45:51.868896893+01:00"
     description: Quobyte Cluster Helm Chart Deployment
     digest: a49ce24874ef6d45b0ef51a1a8af3465f61ca6b723ef9f759f685d95d5784950
     home: https://www.quobyte.com
@@ -413,7 +438,7 @@ entries:
       catalog.cattle.io/release-name: quobyte-cluster
     apiVersion: v2
     appVersion: "3"
-    created: "2025-11-26T13:25:52.280702193+01:00"
+    created: "2025-11-26T13:45:51.868182027+01:00"
     description: Quobyte Cluster Helm Chart Deployment
     digest: a4cfe4c6736e180585cb15b3d59b66bf5043911c6be58b617ce44d0d6ed352f1
     home: https://www.quobyte.com
@@ -435,7 +460,7 @@ entries:
       catalog.cattle.io/release-name: quobyte-cluster
     apiVersion: v2
     appVersion: "3"
-    created: "2025-11-26T13:25:52.279618845+01:00"
+    created: "2025-11-26T13:45:51.867787796+01:00"
     description: Quobyte Cluster Helm Chart Deployment
     digest: 937a31e5794d9cfe2c896f1c5567d50425ce887f076c5a69fc2b6dc38f4e6bfe
     home: https://www.quobyte.com
@@ -453,7 +478,7 @@ entries:
     version: 0.1.4
   - apiVersion: v2
     appVersion: 3.6.0
-    created: "2025-11-26T13:25:52.279208823+01:00"
+    created: "2025-11-26T13:45:51.867379813+01:00"
     description: Install a Quobyte storage cluster
     digest: 1853893a418b81ebe221d39fa58e758987aa0c00c286180712b58aa4e0efcfcc
     name: quobyte-cluster
@@ -464,7 +489,7 @@ entries:
   quobyte-csi:
   - apiVersion: v2
     appVersion: v2.0.2
-    created: "2025-11-26T13:25:52.288128222+01:00"
+    created: "2025-11-26T13:45:51.875905807+01:00"
     description: Quobyte CSI Helm Chart Deployment
     digest: c9947d88b78132e4489f9213abc71adaaabb082e70a8bc444fdb16872bd28908
     home: https://www.quobyte.com
@@ -483,7 +508,7 @@ entries:
     version: 1.8.9
   - apiVersion: v2
     appVersion: v2.0.2
-    created: "2025-11-26T13:25:52.28712077+01:00"
+    created: "2025-11-26T13:45:51.875289327+01:00"
     description: Quobyte CSI Helm Chart Deployment
     digest: 0232cea7dbb176be229c344c331ec8f007624d04655a1c4d8730000959ea3590
     home: https://www.quobyte.com
@@ -502,7 +527,7 @@ entries:
     version: 1.8.8
   - apiVersion: v2
     appVersion: v2.0.2
-    created: "2025-11-26T13:25:52.286528415+01:00"
+    created: "2025-11-26T13:45:51.874674274+01:00"
     description: Quobyte CSI Helm Chart Deployment
     digest: f4056af15c6a942423ac85210600a9cc85170c33a1bd03e19e60648f5d3c1566
     home: https://www.quobyte.com
@@ -521,7 +546,7 @@ entries:
     version: 1.8.7
   - apiVersion: v2
     appVersion: v2.0.2
-    created: "2025-11-26T13:25:52.285941702+01:00"
+    created: "2025-11-26T13:45:51.874068481+01:00"
     description: Quobyte CSI Helm Chart Deployment
     digest: 3ee8610fff4bbb8a4aa93d039eb95719909d283d241bfd725a1ca3ac06662e4e
     home: https://www.quobyte.com
@@ -540,7 +565,7 @@ entries:
     version: 1.8.6
   - apiVersion: v2
     appVersion: v1.8.4
-    created: "2025-11-26T13:25:52.285312968+01:00"
+    created: "2025-11-26T13:45:51.873468836+01:00"
     description: Quobyte CSI Helm Chart Deployment
     digest: 4894f69cafea570d1b46a84175407b125fb53940b72f276b88fb54aa133002c9
     home: https://www.quobyte.com
@@ -559,11 +584,11 @@ entries:
     version: 1.8.5
   - apiVersion: v1
     appVersion: v1.8.3
-    created: "2025-11-26T13:25:52.28467807+01:00"
+    created: "2025-11-26T13:45:51.872829603+01:00"
     description: Quobyte CSI Helm chart
     digest: 91698fe3b362d8a8961057c0486501406d667a17b01d43a9410f6fa1c4e0b946
     name: quobyte-csi
     urls:
     - https://quobyte.github.io/quobyte-k8s-resources/helm-charts/quobyte-csi-1.8.4.tgz
     version: 1.8.4
-generated: "2025-11-26T13:25:52.275472194+01:00"
+generated: "2025-11-26T13:45:51.863859368+01:00"

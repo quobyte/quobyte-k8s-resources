@@ -2,6 +2,8 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: consumer-pod
+  labels:
+    app: consumer-pod
 spec:
   volumes:
     - name: consumer-storage

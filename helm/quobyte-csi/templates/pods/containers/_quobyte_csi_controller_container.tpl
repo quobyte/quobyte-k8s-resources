@@ -9,11 +9,11 @@
   securityContext:
     privileged: true
     capabilities:
-      add: ["SYS_ADMIN"]
-    allowPrivilegeEscalation: true
+      # For shared volume PVCs, ownership change is required      
+      add: ["SYS_ADMIN", "CHOWN"]
   image: {{ .Values.quobyte.dev.csiImage }}
   imagePullPolicy: "IfNotPresent"
-  args :
+  args:
     - "--csi_socket=$(CSI_ENDPOINT)"
     - "--quobyte_mount_path=$(QUOBYTE_MOUNT_PATH)"
     - "--node_name=$(KUBE_NODE_NAME)"
@@ -24,7 +24,8 @@
     - "--quobyte_version={{ .Values.quobyte.version }}"
     - "--immediate_erase={{ .Values.quobyte.immediateErase }}"
     - "--use_k8s_namespace_as_tenant={{ .Values.quobyte.useK8SNamespaceAsTenant }}"
-    - "--shared_volumes_list={{ .Values.quobyte.sharedVolumesList }}"
+    - "--shared_volumes_list={{ join "," .Values.quobyte.sharedVolumesList }}"
+    - "--use_delete_files_task={{ .Values.quobyte.useDeleteFilesTaskForSharedVolumeCleanup }}"
     - "--role=controller"
   env:
     - name: NODE_ID
@@ -52,5 +53,15 @@
     {{- if .Values.quobyte.mapHostCertsIntoContainer }}
     - name: certs
       mountPath: /etc/ssl/certs/
+      mountPropagation: "HostToContainer"
+      readOnly: true
     {{- end }}
+    - name: users
+      mountPath: /etc/passwd
+      mountPropagation: "HostToContainer"
+      readOnly: true
+    - name: groups
+      mountPath: /etc/group
+      mountPropagation: "HostToContainer"
+      readOnly: true
 {{- end }}

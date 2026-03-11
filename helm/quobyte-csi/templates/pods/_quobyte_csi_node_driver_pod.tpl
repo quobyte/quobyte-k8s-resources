@@ -19,6 +19,10 @@ spec:
         app: quobyte-csi-node-{{ .Values.quobyte.csiProvisionerName | replace "." "-"  }}
         role: quobyte-csi
     spec:
+    {{- if default "" .Values.quobyte.csiDriverNodeSelector | trim }}
+      nodeSelector:
+        {{ .Values.quobyte.csiDriverNodeSelector | trim }}
+    {{- end }}
       priorityClassName: system-node-critical
       serviceAccount: quobyte-csi-node-sa-{{ .Values.quobyte.csiProvisionerName | replace "." "-"  }}
       hostNetwork: true
@@ -29,7 +33,10 @@ spec:
       containers:
         {{- include "csi.sidecar.nodeRegistrarContainer" . | indent 8 }}
         {{- include "quobyte-csi-driver.nodeDriverContainer" . | indent 8 }}
-        {{- include "quobyte-csi-driver.podKillerContainer" . | indent 8 }}
+        {{- include "quobyte-csi-driver.podKiller.mountMonitor" . | indent 8 }}
       {{- include "quobyte-csi-driver.nodeDriverPodVolumeAttachments" . | indent 6 }}
+      {{- if trim .Values.quobyte.podKiller.dnsPolicy }}
+      dnsPolicy: {{ trim .Values.quobyte.podKiller.dnsPolicy  }}
+      {{- end }}
 ---
 {{- end }}

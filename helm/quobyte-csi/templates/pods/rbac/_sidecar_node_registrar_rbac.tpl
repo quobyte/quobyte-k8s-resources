@@ -4,7 +4,6 @@ kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: quobyte-csi-driver-registrar-role-{{ .Values.quobyte.csiProvisionerName | replace "." "-"  }}
-  namespace: kube-system
 rules:
   - apiGroups: [""]
     resources: ["events"]
@@ -12,17 +11,7 @@ rules:
   {{- if .Values.quobyte.podKiller.enable }}
   - apiGroups: [""]
     resources: ["pods"]
-    verbs: ["list", "delete"]
-  - apiGroups: [""]
-    resources: ["persistentvolumes"]
-    verbs: ["list"]
-  {{- end }}
-  {{- if .Values.quobyte.podSecurityPolicies }} 
-  - apiGroups: ['policy']
-    resources: ['podsecuritypolicies']
-    verbs:     ['use']
-    resourceNames:
-    - quobyte-psp-{{ .Values.quobyte.csiProvisionerName | replace "." "-"  }}
+    verbs: ["delete"]
   {{- end }}
 ---
 kind: ClusterRoleBinding

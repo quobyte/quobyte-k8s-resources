@@ -24,6 +24,7 @@
     - "--quobyte_version={{ .Values.quobyte.version }}"
     - "--immediate_erase={{ .Values.quobyte.immediateErase }}"
     - "--use_k8s_namespace_as_tenant={{ .Values.quobyte.useK8SNamespaceAsTenant }}"
+    - "--enable_volume_metrics={{ .Values.quobyte.enableVolumeMetrics }}"
     - "--role=node_driver"
   env:
     - name: NODE_ID
@@ -54,5 +55,15 @@
     {{- if .Values.quobyte.mapHostCertsIntoContainer }}
     - name: certs
       mountPath: /etc/ssl/certs/
+      mountPropagation: "HostToContainer"
+      readOnly: true
     {{- end }}
+    - name: users
+      mountPath: /etc/passwd
+      mountPropagation: "HostToContainer"
+      readOnly: true
+    - name: groups
+      mountPath: /etc/group
+      mountPropagation: "HostToContainer"
+      readOnly: true
 {{- end}}

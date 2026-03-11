@@ -19,7 +19,6 @@ spec:
   selector:
     matchLabels:
       app: quobyte-csi-controller-{{ .Values.quobyte.csiProvisionerName | replace "." "-"  }}
-  serviceName: quobyte-csi-{{ .Values.quobyte.csiProvisionerName | replace "." "-"  }} 
   replicas: {{ .Values.quobyte.csiControllerReplicas }}
   template:
     metadata:
@@ -27,6 +26,10 @@ spec:
         app: quobyte-csi-controller-{{ .Values.quobyte.csiProvisionerName | replace "." "-"  }}
         role: quobyte-csi-{{ .Values.quobyte.csiProvisionerName | replace "." "-"  }}
     spec:
+    {{- if default "" .Values.quobyte.csiDriverNodeSelector | trim }}
+      nodeSelector:
+        {{ .Values.quobyte.csiDriverNodeSelector | trim }}
+    {{- end }}
       priorityClassName: system-cluster-critical
       serviceAccount: quobyte-csi-controller-sa-{{ .Values.quobyte.csiProvisionerName | replace "." "-"  }}
 {{- if .Values.quobyte.tolerations }}

@@ -26,17 +26,10 @@ rules:
     verbs: ["get", "list", "watch"]
   - apiGroups: ["snapshot.storage.k8s.io"]
     resources: ["volumesnapshotcontents"]
-    verbs: ["create", "get", "list", "watch", "update", "delete"]
+    verbs: ["create", "get", "list", "watch", "update", "delete", "patch"]
   - apiGroups: ["snapshot.storage.k8s.io"]
     resources: ["volumesnapshotcontents/status"]
-    verbs: ["update"]
-  {{- if .Values.quobyte.podSecurityPolicies }} 
-  - apiGroups: ['policy']
-    resources: ['podsecuritypolicies']
-    verbs:     ['use']
-    resourceNames:
-    - quobyte-psp-{{ .Values.quobyte.csiProvisionerName | replace "." "-"  }}
-  {{- end }}
+    verbs: ["update", "patch"]
 ---
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
@@ -50,6 +43,35 @@ roleRef:
   kind: ClusterRole
   name: external-snapshotter-runner-{{ .Values.quobyte.csiProvisionerName | replace "." "-"  }}
   apiGroup: rbac.authorization.k8s.io
+
 ---
+{{- if gt (.Values.quobyte.csiControllerReplicas | toString | atoi) 1 }}
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  namespace: kube-system
+  name: external-snapshotter-leaderelection-{{ .Values.quobyte.csiProvisionerName | replace "." "-"  }}
+rules:
+- apiGroups: ["coordination.k8s.io"]
+  resources: ["leases"]
+  verbs: ["get", "watch", "list", "delete", "update", "create"]
+{{- end }}
+
+---
+{{- if gt (.Values.quobyte.csiControllerReplicas | toString | atoi) 1 }}
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: external-snapshotter-leaderelection-{{ .Values.quobyte.csiProvisionerName | replace "." "-"  }}
+  namespace: kube-system
+subjects:
+  - kind: ServiceAccount
+    name: quobyte-csi-controller-sa-{{ .Values.quobyte.csiProvisionerName | replace "." "-"  }}
+    namespace: kube-system
+roleRef:
+  kind: Role
+  name: external-snapshotter-leaderelection-{{ .Values.quobyte.csiProvisionerName | replace "." "-"  }}
+  apiGroup: rbac.authorization.k8s.io
+  {{- end }}
   {{- end }}
 {{- end }}

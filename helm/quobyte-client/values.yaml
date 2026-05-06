@@ -15,6 +15,7 @@ quobyte:
   # VolumeMountPoint is related to clientMountPoint, but one directory level below. 
   volumeMountPoint: "/home/quobyte"
   # Command line arguments to pass to mount.quobyte client command
+  ##clientOptions: "--rdma.enabled=true"
   clientOptions: ""
 
   # Registry service address of a matching Quobyte cluster. Default is the k8s service name 

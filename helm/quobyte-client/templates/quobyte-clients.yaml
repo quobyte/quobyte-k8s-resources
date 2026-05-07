@@ -22,8 +22,6 @@ spec:
         image: {{ .Values.quobyte.clientImage | quote }} 
         imagePullPolicy: Always
         env:
-          - name: LimitMEMLOCK 
-            value: infinity
           - name: QUOBYTE_CLIENT_LOG_LEVEL
             value: INFO
           - name: QUOBYTE_REGISTRY
@@ -64,6 +62,7 @@ spec:
           - /bin/bash
           - -xec
           - |
+            ulimit -l 10000000
             ENABLE_ACCESS_CONTEXTS=""
             if [[ ${ENABLE_ACCESS_KEYS} = true ]]; then
               ENABLE_ACCESS_CONTEXTS="--enable-access-contexts --no-default-permissions"

@@ -3,8 +3,8 @@
 Access keys can be used to authenticate against a Quobyte storage system.
 When consuming storage authentication is involved at different stages:
 
-1.) Creating and deleting a volume
-2.) Publish/ Unpublish a volume to a pod.
+1. Creating and deleting a volume
+2. Publish/ Unpublish a volume to a pod.
 
 The first stage will require Quobyte privileges of a "tenant admin".
 The second stage will require Quobyte privileges of a "tenant member".
@@ -12,13 +12,13 @@ The second stage will require Quobyte privileges of a "tenant member".
 Each of these steps can use different credentials, referenced in a Kubernetes
 storage class.
 
-To only use minimal necessary privileges we will use in this example different access keys.
+To only use minimal necessary privileges this example uses different access keys per stage.
 One access key, restricted to only API usage, belonging to a Quobyte user with "Tenant Admin" privileges. 
-The other access key, restricted to "File system and S3 access" belongs to a user with only "Tenant Member" 
+The other access key, restricted to "File system and S3 access" belonging to a user with only "Tenant Member" 
 privileges. 
 
-The storage class will not reference access keys directly, but will refer to secret names used 
-in the PVC definition as annotation. 
+The storage class (01_storage_class.yaml) does not reference access keys directly, but will refer to secret names used 
+in the PVC definition (04_test-pvc.yaml) as annotation. 
 This allows to have one generic storage class definition and flexible use of secrets when 
 defining PVCs. 
 In other words: Users can manage their secrets on their own.

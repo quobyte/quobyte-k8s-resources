@@ -26,7 +26,7 @@ In other words: Users can manage their secrets on their own.
 The needed access keys can be created by users themselves using either the Quobyte
 Webconsole, "qmgmt" CLI tooling or the Quobyte API.
 
-
+![Quobyte Webconsole](../usage-examples/images/creating_access_key.png "Creating Access Keys")
 
 
 

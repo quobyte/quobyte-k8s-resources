@@ -27,9 +27,16 @@ quobyte:
   # https://kubernetes.io/docs/concepts/storage/storage-classes/#aws-ebs
   # https://learn.microsoft.com/en-us/rest/api/storagerp/srp_sku_types
   
-  # Minimum number of replicas per Quobyte services, minimum is 3.
+  # Number of replicas per Quobyte service.
   # Your nodepool must have at least 3 nodes.
-  replicas: 3
+  replicas:
+    registry: 4
+    data: 4
+    metadata: 4
+    s3: 2
+    webconsole: 1
+    api: 2
+
   
   # Data disks attached to each Quobyte data services, minimum is one data disk,
   # maximum is 16. Please note that adding more data disks will increase capacity,

@@ -7,8 +7,7 @@ spec:
   selector:
     matchLabels:
       app: quobyte-web # has to match .spec.template.metadata.labels
-  ##replicas: {{ .Values.quobyte.replicas }} # by default is 4 
-  replicas: 1 # by default is 4 
+  replicas: {{ .Values.quobyte.replicas.webconsole }}
   template:
     metadata:
       labels:
@@ -75,6 +74,6 @@ spec:
                 - key: app
                   operator: In
                   values:
-                  - quobyte
+                  - quobyte-web
               topologyKey: "kubernetes.io/hostname"
 

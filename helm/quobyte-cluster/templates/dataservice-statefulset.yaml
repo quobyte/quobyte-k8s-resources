@@ -15,7 +15,7 @@ spec:
       partition: 0 # Optional: default is 0, meaning all pods will be updated sequentially
   # let some time pass between rolling upgrades to finish catch up tasks etc.
   minReadySeconds: 180
-  replicas: {{ .Values.quobyte.replicas }} # by default is 4 
+  replicas: {{ .Values.quobyte.replicas.data }}
   template:
     metadata:
       labels:

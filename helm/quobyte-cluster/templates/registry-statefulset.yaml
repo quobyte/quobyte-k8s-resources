@@ -8,7 +8,7 @@ spec:
     matchLabels:
       app: quobyte-reg # has to match .spec.template.metadata.labels
   serviceName: "quobyte"
-  replicas: {{ .Values.quobyte.replicas }}  
+  replicas: {{ .Values.quobyte.replicas.registry }}
   podManagementPolicy: Parallel
   # Start registries sequentially when doing an upgrade.
   updateStrategy:

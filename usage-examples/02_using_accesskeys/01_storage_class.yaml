@@ -10,12 +10,13 @@ metadata:
 parameters:
   accessMode: "755"
   createQuota: "true"
-  csi.storage.k8s.io/controller-expand-secret-name: ${pvc.annotations['admin-secret']} 
-  csi.storage.k8s.io/provisioner-secret-name: ${pvc.annotations['admin-secret']}
-  csi.storage.k8s.io/provisioner-secret-namespace: ${pvc.namespace}
-  csi.storage.k8s.io/controller-expand-secret-namespace: ${pvc.namespace}
+  
+  csi.storage.k8s.io/provisioner-secret-name: my-tenant-admin-secret
+  csi.storage.k8s.io/provisioner-secret-namespace: kube-system 
   csi.storage.k8s.io/node-publish-secret-name: ${pvc.annotations['user-secret']}
   csi.storage.k8s.io/node-publish-secret-namespace: ${pvc.namespace} 
+  csi.storage.k8s.io/controller-expand-secret-name: ${pvc.annotations['admin-secret']} 
+  csi.storage.k8s.io/controller-expand-secret-namespace: ${pvc.namespace}
   labels: usagetype:exploringTheOcean
   quobyteTenant: "My Tenant"
 

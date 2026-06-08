@@ -16,6 +16,8 @@ To only use minimal necessary privileges this example uses different access keys
 One access key, restricted to only API usage, belonging to a Quobyte user with "Tenant Admin" privileges. 
 The other access key, restricted to "File system and S3 access" belonging to a user with only "Tenant Member" 
 privileges. 
+Both secrets are stored in different name spaces: The tenant admin in "kube-system" and the unprivileged one in 
+the users current namespace.
 
 The storage class (01_storage_class.yaml) does not reference access keys directly, but will refer to secret names used 
 in the PVC definition (04_test-pvc.yaml) as annotation. 

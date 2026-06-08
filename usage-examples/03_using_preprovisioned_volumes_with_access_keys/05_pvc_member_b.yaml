@@ -1,0 +1,15 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: shared-volume-claim-b
+  annotations: {
+    user-secret: member-b-secret, 
+  }
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: quobyte-byos 
+  volumeName: pre-provisioned-volume-b

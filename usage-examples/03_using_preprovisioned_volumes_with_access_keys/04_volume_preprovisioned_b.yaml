@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pre-provisioned-volume-b 
+spec:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 10Gi
+  csi:
+    driver: csi.quobyte.com
+    # The volumeHandle refers to a tenant name and a volume name
+    volumeHandle: 'My Tenant|testvol'
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: quobyte-byos

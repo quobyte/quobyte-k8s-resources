@@ -4,7 +4,6 @@ metadata:
   name: accesskey-claim
   annotations: {
     user-secret: user-secret, 
-    admin-secret: admin-secret 
   }
 spec:
   accessModes:

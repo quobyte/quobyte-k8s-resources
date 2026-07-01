@@ -8,7 +8,7 @@ metadata:
   # Quobyte "Bring your own secret"
   name: quobyte-byos
 parameters:
-  accessMode: "755"
+  accessMode: "775"
   createQuota: "true"
   
   csi.storage.k8s.io/provisioner-secret-name: my-tenant-admin-secret

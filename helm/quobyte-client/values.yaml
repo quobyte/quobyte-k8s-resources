@@ -25,16 +25,19 @@ quobyte:
   #registry: arecord1.example.com,arecord2.example.com,arecord3.example.com
   #registry: 192.168.2.1,192.168.2.2,192.168.2.3
   registry: _quobyte._tcp.quobyte.default.svc.cluster.local # Assumes Quobyte services are deployed in namespace "default".
-  
 
+# Enable this for numa node assignment.
+# Scheduler name value must match the installed scheduler plugin name
+# schedulerName: topology-aware-scheduler
 hostNetwork: false
 nodeSelector: {}
-resources: {}
+resources:
+  # For numa node assignment, the limits and requests should match exactly
   # limits:
-  #   cpu: 4
+  #   cpu: 4 # For numa node assignment, this should be an integer (4 is allowed but 4.5 is not allowed)
   #   memory: 6Gi
   # requests:
-  #   cpu: 1
-  #   memory: 4Gi
+  #   cpu: 4 
+  #   memory: 6Gi
 tolerations: []
 affinity: {}

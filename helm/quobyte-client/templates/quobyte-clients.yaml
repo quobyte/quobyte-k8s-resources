@@ -17,6 +17,9 @@ spec:
         role: client
         version: {{ .Values.quobyte.clientVersion | quote }}
     spec:
+      {{- if .Values.schedulerName }}
+      schedulerName: {{ .Values.schedulerName | quote }}
+      {{- end }}
       containers:
       - name: quobyte-client
         image: {{ .Values.quobyte.clientImage | quote }} 

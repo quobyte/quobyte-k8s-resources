@@ -93,7 +93,9 @@ quobyte:
     # If you have configured custom DNS, you may need to add DNS policy to the
     # pod killer pod so that the cache endpoint is resolved.
     # See https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy
-    dnsPolicy: ""
+    ##dnsPolicy: ""
+    dnsPolicy: ClusterFirstWithHostNet
+
     # Batch size for pod uid resolution via pod killer cache
     podUidLookupBatchSize: 10
     # Number of pods killed parallelly per node

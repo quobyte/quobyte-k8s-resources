@@ -1,7 +1,7 @@
-name: GitHub Actions Demo
+name: Helm chart unit tests
 on: [push]
 jobs:
-  Explore-GitHub-Actions:
+  run-unit-tests:
     runs-on: ubuntu-latest
     steps:
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."

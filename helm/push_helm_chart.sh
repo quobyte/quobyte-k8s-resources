@@ -2,10 +2,46 @@
 
 set -euo pipefail
 
+usage() {
+    echo "Usage: $0 <chart_dir> <chart_version> <app_version> [quay_helm_url] [quay_username] [csi_container_url_base]"
+    echo "       $0 --package <chart_package.tgz> [quay_helm_url] [quay_username]"
+    echo "Example: $0 ./quobyte-csi 1.2.3 v2.1.0"
+    echo "Example: $0 --package ./quobyte-csi-1.2.3.tgz"
+}
+
+if ! command -v helm &> /dev/null; then
+    echo "Error: 'helm' is required but not installed."
+    exit 1
+fi
+
+if [[ "${1:-}" == "--package" || "${1:-}" == "-p" ]]; then
+    if [ "$#" -lt 2 ]; then
+        echo "Error: Missing package path."
+        usage
+        exit 1
+    fi
+
+    PACKAGE_PATH=$2
+    QUAY_HELM_URL=${3:-"quay.io/quobyte/helm/"}
+    QUAY_USERNAME=${4:-"quobyte"}
+
+    if [ ! -f "${PACKAGE_PATH}" ]; then
+        echo "Error: Package file '${PACKAGE_PATH}' not found."
+        exit 1
+    fi
+
+    echo "=== Authenticating with Quay.io ==="
+    helm registry login quay.io -u "${QUAY_USERNAME}"
+
+    echo "=== Pushing existing package ${PACKAGE_PATH} to Quay.io OCI Registry ==="
+    helm push "${PACKAGE_PATH}" "oci://${QUAY_HELM_URL}"
+    echo "=== Success! Chart pushed to oci://${QUAY_HELM_URL} ==="
+    exit 0
+fi
+
 if [ "$#" -lt 3 ]; then
     echo "Error: Missing arguments."
-    echo "Usage: $0 <chart_dir> <chart_version> <app_version>"
-    echo "Example: $0 ./quobyte-csi 1.2.3 v2.1.0"
+    usage
     exit 1
 fi
 
@@ -19,11 +55,6 @@ CSI_CONTAINER_URL_BASE=${6:-"quay.io/quobyte/csi"}
 if [[ ! "${APP_VERSION}" =~ ^v ]]; then
     echo "Error: App version must start with a lowercase 'v' (e.g., v1.2.3, v2.5.0)."
     echo "You provided: '${APP_VERSION}'"
-    exit 1
-fi
-
-if ! command -v helm &> /dev/null; then
-    echo "Error: 'helm' is required but not installed."
     exit 1
 fi
 

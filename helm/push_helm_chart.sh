@@ -58,7 +58,7 @@ if [[ "${1:-}" == "--package" || "${1:-}" == "-p" ]]; then
     fi
 
     PACKAGE_PATH=$2
-    QUAY_HELM_URL=${3:-"quay.io/quobyte/helm/"}
+    QUAY_HELM_URL=${3:-"quay.io/quobyte/charts/"}
     QUAY_USERNAME=${4:-"quobyte"}
 
     if [ ! -f "${PACKAGE_PATH}" ]; then

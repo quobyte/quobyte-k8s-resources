@@ -22,5 +22,7 @@ echo "----------------------------------------"
 
 for TAG in $(oras repo tags "$OCI_CHARTS"); do
   APP_VER=$(oras manifest fetch-config "$OCI_CHARTS:$TAG" 2>/dev/null | jq -r '.appVersion // "N/A"')
+  printf "%s\t%s\n" "$TAG" "$APP_VER"
+done | sort -t $'\t' -k2,2 -V -r | while IFS=$'\t' read -r TAG APP_VER; do
   printf "%-20s %-20s\n" "$TAG" "$APP_VER"
 done

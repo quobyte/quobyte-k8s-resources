@@ -138,7 +138,7 @@ update_csi_files_with_version(){
   "${CHART_DIR}/tests/__snapshot__/csi_driver_test.yaml.snap"
 }
 
-if [[ "${CHART_DIR}" =~ *-csi ]]; then
+if [[ "${CHART_DIR}" == *-csi ]]; then
   update_csi_files_with_version
 fi
 
@@ -150,8 +150,9 @@ PACKAGE_PATH=$(echo "${PACKAGE_OUTPUT}" | awk -F': ' '{print $2}')
 
 echo "=== Pushing to Quay.io OCI Registry ==="
 helm push "${PACKAGE_PATH}" "oci://${QUAY_HELM_URL}"
-if [[ $1 -ne 0 ]]; then
+if [[ $? -ne 0 ]]; then
   echo "FAILURE: push to oci://${QUAY_HELM_URL} failed."
+  exit 1
 fi
 rm "${PACKAGE_PATH}"
 echo "=== Success! Chart pushed to oci://${QUAY_HELM_URL} ==="

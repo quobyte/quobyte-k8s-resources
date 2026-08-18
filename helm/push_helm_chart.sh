@@ -90,7 +90,7 @@ fi
 CHART_DIR=$1
 CHART_VERSION=$2
 APP_VERSION=$3
-QUAY_HELM_URL=${4:-"quay.io/quobyte/helm/"}
+QUAY_HELM_URL=${4:-"quay.io/quobyte/charts/"}
 QUAY_USERNAME=${5:-"quobyte"}
 CSI_CONTAINER_URL_BASE=${6:-"quay.io/quobyte/csi"}
 CHART_NAME=$(basename "${CHART_DIR}")

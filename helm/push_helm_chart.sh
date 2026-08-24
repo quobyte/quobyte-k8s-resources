@@ -96,7 +96,7 @@ CSI_CONTAINER_URL_BASE=${6:-"quay.io/quobyte/csi"}
 CHART_NAME=$(basename "${CHART_DIR}")
 CHART_REF="oci://${QUAY_HELM_URL}${CHART_NAME}"
 
-if [[ ! "${APP_VERSION}" =~ ^v ]]; then
+if [[ "${CHART_NAME}" == "quobyte-csi" && ! "${APP_VERSION}" =~ ^v ]]; then
     echo "Error: App version must start with a lowercase 'v' (e.g., v1.2.3, v2.5.0)."
     echo "You provided: '${APP_VERSION}'"
     exit 1

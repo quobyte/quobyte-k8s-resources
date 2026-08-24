@@ -23,7 +23,7 @@ spec:
       containers:
       - name: quobyte-client
         image: {{ .Values.quobyte.clientImage | quote }} 
-        imagePullPolicy: Always
+        imagePullPolicy: {{ .Values.quobyte.clientImagePullPolicy | quote }} 
         env:
           - name: QUOBYTE_CLIENT_LOG_LEVEL
             value: INFO

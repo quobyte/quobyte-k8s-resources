@@ -6,10 +6,10 @@ quobyte:
   enableAccessKeys: "true"
   
   # Container image used 
-  clientImage: "quay.io/quobyte/quobyte-client:4" 
+  clientImage: "quay.io/quobyte/quobyte-client:5" 
   clientImagePullPolicy: "Always"
   # Refers to the Quobyte major version. Just sets a label.
-  clientVersion: "4"
+  clientVersion: "5"
 
   # The target directory where Quobyte client mounts all Quobyte volumes. 
   clientMountPoint: "/home/quobyte/mounts"

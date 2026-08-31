@@ -43,6 +43,10 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: spec.nodeName
+          - name: MY_POD_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
         ports:
           - name: http-port
             containerPort: 55000
@@ -84,7 +88,7 @@ spec:
               chattr +i ${QUOBYTE_MOUNT_POINT} || \
                 echo "WARNING: The local filesystem does not support IMMUTABLE flag. Mount point pollution is possible."
               /usr/bin/mount.quobyte --hostname ${NODENAME} \
-                --http-port 55000 -f \
+                --http-port 55000 --http-bind-address ${MY_POD_IP} -f \
                 -d ${QUOBYTE_CLIENT_LOG_LEVEL} -l /dev/stdout ${OPTS} ${QUOBYTE_CLIENT_OPTS} \
                 --minidump-path /tmp/minidumps --allow-minidump-upload \
                 ${QUOBYTE_REGISTRY}/ ${QUOBYTE_MOUNT_POINT} ${ENABLE_ACCESS_CONTEXTS}

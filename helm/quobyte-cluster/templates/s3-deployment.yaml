@@ -1,80 +1,167 @@
 ---
 {{- if .Values.quobyte.s3.enabled }}
 apiVersion: apps/v1
-kind: Deployment 
+kind: Deployment
 metadata:
   name: quobyte-s3
 spec:
   selector:
     matchLabels:
-      app: quobyte-s3 # has to match .spec.template.metadata.labels
+      app: quobyte-s3  # has to match .spec.template.metadata.labels
   replicas: {{ .Values.quobyte.replicas.s3 }}
   template:
     metadata:
       labels:
-        app: quobyte-s3 # has to match .spec.selector.matchLabels
+        app: quobyte-s3  # has to match .spec.selector.matchLabels
       annotations:
         timestamp: "{{ now }}"
     spec:
       terminationGracePeriodSeconds: 10
       hostNetwork: {{ .Values.hostNetwork }}
       dnsPolicy: ClusterFirstWithHostNet
+      tolerations:
+        - key: {{ .Values.taintKey }}
+          operator: "Exists"
+          {{- if .Values.taintValue }}
+          value: {{ .Values.taintValue | quote }}
+          {{- end }}
+          effect: "NoSchedule"
       containers:
-      - name: quobyte-s3
-        image: {{ .Values.quobyte.image }}
-        imagePullPolicy: Always
-        env:
-          - name: NODENAME
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.name
-          - name: MY_POD_IP
-            valueFrom:
-              fieldRef:
-                fieldPath: status.podIP
-          - name: HOST_IP
-            valueFrom:
-              fieldRef:
-                fieldPath: status.podIP
-          - name: CLOUD_INSTALL
-            value: "1" 
-          - name: QUOBYTE_DATA_PORT 
-            value: "7863"
-          - name: QUOBYTE_META_PORT
-            value: "7862"
-          - name: QUOBYTE_REG_PORT 
-            value: "7861"
-          - name: QUOBYTE_API_PORT
-            value: "7860" 
-          - name: QUOBYTE_S3_PORT
-            value: "8484" 
-          - name: QUOBYTE_S3_HOSTNAME 
-            value: "{{ .Values.quobyte.s3.dnsname }}"
-          - name: QUOBYTE_SERVICE
-            value: "s3"
-          - name: QUOBYTE_REGISTRY
-            value: _quobyte._tcp.quobyte.{{ .Release.Namespace }}.svc.cluster.local
-          - name: CLUSTER_NS
-            value: {{ .Release.Namespace }}
-          - name: LIMIT_OPEN_FILES
-            value: "{{ .Values.quobyte.maxopenfiles }}"
-          - name: LIMIT_MAX_PROCESSES
-            value: "{{ .Values.quobyte.maxprocs }}"
-        ports:
-        - containerPort: 8484
-          name: quobyte-s3
+        - name: quobyte-s3
+          image: {{ .Values.quobyte.image }}
+          imagePullPolicy: Always
+          volumeMounts:
+          {{- if .Values.quobyte.s3.enable_https }}
+          - name: tls-certificates
+            mountPath: "/etc/quobyte/certificates"
+            readOnly: true
+          {{- end }}
+          env:
+            - name: NODENAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: MY_POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: HOST_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: CLOUD_INSTALL
+              value: "1"
+            - name: QUOBYTE_DATA_PORT
+              value: "7863"
+            - name: QUOBYTE_META_PORT
+              value: "7862"
+            - name: QUOBYTE_REG_PORT
+              value: "7861"
+            - name: QUOBYTE_API_PORT
+              value: "7860"
+            - name: QUOBYTE_S3_PORT
+              value: "80"
+            - name: QUOBYTE_S3_HOSTNAME
+              value: "{{ .Values.quobyte.s3.dnsname }}"
+            {{- if .Values.quobyte.s3.enable_https }}
+            - name: QUOBYTE_S3_SECURE_PORT 
+              value: "443"
+            - name: QUOBYTE_S3_CA
+              value: "{{ .Values.quobyte.s3.ca }}"
+            {{- if .Values.quobyte.s3.pkcs12 }}
+            - name: QUOBYTE_S3_PKCS12
+              value: "{{ .Values.quobyte.s3.pkcs12 }}"
+            {{- end }}
+            {{- if .Values.quobyte.s3.cert }}
+            - name: QUOBYTE_S3_CERT
+              value: "{{ .Values.quobyte.s3.cert }}"
+            {{- end }}
+            {{- if .Values.quobyte.s3.key }}
+            - name: QUOBYTE_S3_KEY
+              value: "{{ .Values.quobyte.s3.key }}"
+            {{- end }}
+            {{- end }}
+            - name: QUOBYTE_SERVICE
+              value: "s3"
+            - name: QUOBYTE_REGISTRY
+              value: _quobyte._tcp.quobyte.{{ .Release.Namespace }}.{{ default "svc.cluster.local" .Values.clusterDnsSuffix }}
+            - name: CLUSTER_NS
+              value: {{ .Release.Namespace }}
+            - name: LIMIT_OPEN_FILES
+              value: "{{ .Values.quobyte.maxopenfiles }}"
+            - name: LIMIT_MAX_PROCESSES
+              value: "{{ .Values.quobyte.maxprocs }}"
+            - name: LIMIT_LOCKED_MEMORY
+              value: "10000000"
+            {{- if .Values.quobyte.enable_rdma.s3 }}
+            - name: QUOBYTE_ENABLE_RDMA
+              value: "{{ .Values.quobyte.enable_rdma.s3 }}"
+            {{- end }}
+          ports:
+            - containerPort: 80
+              name: quobyte-s3
+            - containerPort: 443
+              name: quobyte-s3-tls
+            - containerPort: 8484
+              name: quobyte-s3-alt
+            - containerPort: 7864
+              name: s3-ping
+              protocol: UDP
+            - containerPort: 7874
+              name: s3-health
+          {{- if .Values.quobyte.enable_rdma.s3 }}
+          securityContext:
+            privileged: true
+          {{- end }}
+          {{- with .Values.quobyte.resources.s3 }}
+          resources:
+            {{- $cpuReq := "" }}
+            {{- $cpuLim := "" }}
+            {{- $memReq := "" }}
+            {{- $memLim := "" }}
+            {{- if .cpu }}
+              {{- if .cpu.requests }}{{- $cpuReq = (.cpu.requests | toString) }}{{- end }}
+              {{- if .cpu.limit }}{{- $cpuLim = (.cpu.limit | toString) }}{{- end }}
+            {{- end }}
+            {{- if .memory }}
+              {{- if .memory.requests }}{{- $memReq = (.memory.requests | toString) }}{{- end }}
+              {{- if .memory.limit }}{{- $memLim = (.memory.limit | toString) }}{{- end }}
+            {{- end }}
+            {{- if or $cpuReq $memReq }}
+            requests:
+              {{- if $cpuReq }}
+              cpu: {{ $cpuReq | quote }}
+              {{- end }}
+              {{- if $memReq }}
+              memory: {{ $memReq | quote }}
+              {{- end }}
+            {{- end }}
+            {{- if or $cpuLim $memLim }}
+            limits:
+              {{- if $cpuLim }}
+              cpu: {{ $cpuLim | quote }}
+              {{- end }}
+              {{- if $memLim }}
+              memory: {{ $memLim | quote }}
+              {{- end }}
+            {{- end }}
+          {{- end }}
       {{- if .Values.nodepoolname }}
       nodeSelector:
            storage-node-pool: {{ .Values.nodepoolname }}
       {{- end }}
+      volumes:
+        - name: tls-certificates
+          secret:
+            secretName: s3-cert
       affinity:
         podAntiAffinity:
-            requiredDuringSchedulingIgnoredDuringExecution:
+          requiredDuringSchedulingIgnoredDuringExecution:
             - labelSelector:
                 matchExpressions:
-                - key: app
-                  operator: In
-                  values:
-                  - quobyte-s3
+                  - key: app
+                    operator: In
+                    values:
+                      - quobyte-s3
               topologyKey: "kubernetes.io/hostname"
 {{- end }}

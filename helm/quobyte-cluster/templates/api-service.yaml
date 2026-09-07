@@ -8,10 +8,11 @@ metadata:
     app: quobyte-api
 spec:
   ports:
-  - port: 7860
-    name: "quobyte"
-    protocol: "TCP"
-    targetPort: 7860
+    - port: 7860
+      name: "quobyte"
+      protocol: "TCP"
+      targetPort: 7860
   selector:
     app: quobyte-api
-
+  sessionAffinity: ClientIP
+  

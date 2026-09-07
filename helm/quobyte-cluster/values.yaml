@@ -1,3 +1,4 @@
+---
 # Name of the nodepool in which the Quobyte services will be deployed.
 # A separate nodepool can be used for performance isolation to avoid
 # other workloads from impacting your storage.
@@ -5,85 +6,149 @@
 # "kubectl label nodes <your-node-name> storage-node-pool=quobyte"
 ## nodepoolname: quobyte
 
-# Configuration for the Quobyte services, i.e. the Quobyte cluster providing storage.
+# Configuration for the Quobyte services, i.e. the Quobyte cluster providing
+# storage.
 quobyte:
   # Loadbalancer to make the Quobyte webconsole accessible.
-  # If set to true an internal IP will be used, if set to false an external IP will be used
-  # the exact semantics of internal/external depend on your k8s config or provider.
-  lbinternal: false 
-  
-  # Configuration for the persistent disks used by the Quobyte services.
-  # Storage provisioner depending to the cloud environment:
-  # storageProvisioner: "kubernetes.io/aws-ebs"
-  # storageProvisioner: "kubernetes.io/azure-disk" 
-  storageProvisioner: "kubernetes.io/gce-pd"
-  # Storage type, also depending on the used environment:
-  # flashStorage: "gp2"           # AWS general purpose SSD
-  # flashStorage: "Standard_LRS"  # Azure "Standard Locally Redundant Storage"
-  # flashStorage: "pd-ssd"        # GCE SSD storage
-  flashStorage: "pd-ssd"
-  # See also: 
-  # https://kubernetes.io/docs/concepts/storage/storage-classes/#gce-pd
-  # https://kubernetes.io/docs/concepts/storage/storage-classes/#aws-ebs
-  # https://learn.microsoft.com/en-us/rest/api/storagerp/srp_sku_types
-  
-  # Number of replicas per Quobyte service.
-  # Your nodepool must have at least 3 nodes.
+  # If set to true an internal IP will be used, if set to false an external IP
+  # will be used the exact semantics of internal/external depend on your k8s
+  # config or provider.
+  lbinternal: false
+
+  # Configuration for the persistent disks used by the Quobyte registry service.
+  # This can be your clusters default storage class without strong performance 
+  # requirements.
+  # storageclassRegistry: "standard"		# GKE default	
+  # storageclassRegistry: "managed-csi"		# AKS default
+  # storageclassRegistry: "local-path"		# k3s default
+  storageclassRegistry: "standard"
+
+  # Minimum number of replicas per Quobyte service.
+  # Registry, Metadata and Data must have a minimum of 3
+  # API, Webconsole and S3 need a minimum of 1, more is recommended for
+  # fault-tolerance
   replicas:
     registry: 4
     data: 4
     metadata: 4
-    s3: 2
+    s3: 4
     webconsole: 1
-    api: 2
+    api: 1
 
-  
-  # Data disks attached to each Quobyte data services, minimum is one data disk,
-  # maximum is 16. Please note that adding more data disks will increase capacity,
-  # but not necessarily the performance of your Quobyte cluster.
-  # The name MUST start with "data".
-  # The mount point MUST start with "/var/lib/quobyte/devices/data..." and the last
-  # part MUST match the disk name. E.g. if the name is "data5" the mountpoint
-  # must be "/var/lib/quobyte/devices/data5".
-  # The minimum capacity of a disk must be 100Gi, recommended size depends on the
-  # cloud environment, e.g. 840Gi for Google Persistent SSDs.
-  datadisks:
-    - name: data0
-      mountpoint: /var/lib/quobyte/devices/data0
-      size: "840Gi"
-    - name: data1
-      mountpoint: /var/lib/quobyte/devices/data1
-      size: "840Gi"
-  
-  # Metadata disks attached to each Quobyte metadata service, minimum is one
-  # metadata disk. Similar to datadisks, names MUST start with "metadata".
-  # Minimum capacity is 100Gi, recommended size depends on the cloud environment.
-  # Please make sure to use SSDs or media with similar peformance characteristics.
-  metadatadisks:
-    - name: metadata0
-      mountpoint: /var/lib/quobyte/devices/metadata0
-      size: "100Gi"
-      
-  # Set enabled to start the Quobyte S3 service. Requires a properly
-  # configured domain name.
-  # As S3 is an HTTP-based protocol, it requires a correct DNS hostname setup. 
-  # Generally the S3 service will be available under a specific hostname such as s3.example.com. 
-  # Buckets can be addressed as a subdomain of the host e.g., <bucket name>.s3.example.com.
+  # S3 / object storage configuration
+  # Set "enabled: true" to start the Quobyte S3 service.
+  # As S3 is an HTTP-based protocol, it requires a correct DNS hostname setup.
+  # Generally the S3 service will be available under a specific hostname such
+  # as s3.example.com. Buckets can be addressed as a subdomain of the host
+  # e.g., <bucket name>.s3.example.com.
   #
-  # HTTP requires a setup of both the S3 hostname and a wildcard hostname for subdomains in your DNS
-  # infrastructure which points to the machine or machines running the S3 Proxy. 
-  # So at a minimum, there are two CNAME records that point to a machine running the S3 proxy
+  # Get the IP endpoint for your DNS records like this:
+  # ``` kubectl get svc quobyte-s3 ```
+  # once the Helm Chart is deployed.
+  # The resulting IP address in the "External IP" field can be used to populate your DNS.
   s3:
-    enabled: false 
+    enabled: true
+    # https://docs.quobyte.com/docs/16/latest/s3_gateway.html#hostname-setup
+    # (can be configured in webconsole)
     dnsname: s3.example.com
-  
+    enable_https: false
+    # If HTTPS is used, Quobyte will need:
+    # 1) The CA certificate
+    # 2) The service certificate (matching the DNS domain name in use)
+    # 3) The service certificate key file
+    # Key and certificate can be combined in a pkcs12 file.
+    # The configuration values are file paths to the respective files.
+    # https://docs.quobyte.com/docs/16/latest/s3_gateway.html#ssl-https-setup
+    ca: "/etc/quobyte/certificates/ca.crt" 
+    cert: "/etc/quobyte/certificates/tls.crt"
+    key: "/etc/quobyte/certificates/tls.key"
+    # There should be either pk12 or crt/key combination
+    #pkcs12:  "/etc/quobyte/certificates/tls.pk12"
+
   webconsoleport: 8080
-  image: quay.io/quobyte/quobyte-server:4 
+  image: quay.io/quobyte/quobyte-server:5
   # Maximum number of open file descriptors per container,
   # must be set to 999,999 or more.
   maxopenfiles: "1048576"
   # Maximum number of processes, must be set to 16,000 or more.
   maxprocs: "16384"
 
-# Quobyte-independent settings:    
+  # Set to true to enable RDMA capabilities for individual service types
+  enable_rdma:
+    data: true
+    metadata: true
+    registry: true
+    s3: true
+
+  # Memory settings to pass to Java, see
+  # https://support.quobyte.com/docs/16/latest/reference_services.html#changing-the-memory-configuration
+  memory:
+    maxmem:
+      metadata: "32G"
+      data: "10G"
+    maxbuffer:
+      data: "20G"
+      metadata: "8G"
+      other: "8G"
+
+  # Resources — any key or sub-key may be omitted; only present values are
+  # rendered.
+  #
+  # CPU limits are intentionally omitted by default. Kubernetes enforces them
+  # via CFS throttling, which stalls containers even when the node has spare
+  # capacity. For a storage system this causes latency spikes during bursty
+  # work. CPU requests are sufficient: they drive scheduling and set the pod's
+  # share during contention. Only add a CPU limit if hard multi-tenant
+  # isolation is required and the latency trade-off is acceptable.
+  #
+  # Memory requests should equal limits to prevent overcommitment. A lower
+  # request lets the scheduler place more pods than the node can safely
+  # support; when every pod reaches its limit the kernel OOM-killer decides
+  # what dies — storage daemons are poor candidates. Keeping memory
+  # request == limit ensures the pod has zero 'excess usage' relative to its
+  # request. This places it at the absolute bottom of the Burstable eviction
+  # rank, providing the maximum possible stability for a configuration that
+  # still allows CPU bursting.
+  resources:
+    # registry:
+    #  cpu:
+    #    requests: 1
+    #  memory:
+    #    requests: "24G"
+    #    limit: "24G"
+    # metadata:
+    #   cpu:
+    #     requests: 2
+    #   memory:
+    #     requests: "128G"
+    #     limit: "128G"
+    # data:
+    #   cpu:
+    #     requests: 2
+    #   memory:
+    #     requests: "64G"
+    #     limit: "64G"
+    # s3: 
+    #   cpu:
+    #     requests: 2
+    #   memory:
+    #     requests: "64G"
+    #     limit: "64G"
+    webconsole: {}
+    api: {}
+
+
+# Quobyte-independent settings:
 hostNetwork: false
+
+# Taint Keys can be used to dedicate tainted
+# worker nodes to only quobyte storage containers.
+# If no other workloads shall be scheduled on these nodes
+# set a taint like this:
+# "kubectl taint node <nodeName> storage=true:NoSchedule
+# The taint value can be anything, but the key must be "storage".
+taintKey: storage
+
+# Depending on your Kubernetes cluster the DNS suffix 
+# for internal name resolution might differ.
+## clusterDnsSuffix: svc.cluster.local

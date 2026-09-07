@@ -6,9 +6,10 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: quobyte-reg # has to match .spec.template.metadata.labels
+      app: quobyte-reg  # has to match .spec.template.metadata.labels
   serviceName: "quobyte"
   replicas: {{ .Values.quobyte.replicas.registry }}
+  # Start all registries in parallel during initial install
   podManagementPolicy: Parallel
   # Start registries sequentially when doing an upgrade.
   updateStrategy:
@@ -21,141 +22,209 @@ spec:
   template:
     metadata:
       labels:
-        app: quobyte-reg # has to match .spec.selector.matchLabels
+        app: quobyte-reg  # has to match .spec.selector.matchLabels
       annotations:
         timestamp: "{{ now }}"
     spec:
       subdomain: "quobyte"
-      terminationGracePeriodSeconds: 10
+      terminationGracePeriodSeconds: 60
       hostNetwork: {{ .Values.hostNetwork }}
       dnsPolicy: ClusterFirstWithHostNet
+      tolerations:
+        - key: {{ .Values.taintKey }}
+          operator: "Exists"
+          {{- if .Values.taintValue }}
+          value: {{ .Values.taintValue | quote }}
+          {{- end }}
+          effect: "NoSchedule"
       initContainers:
-      - name: quobyte-reg-pre 
-        image: {{ .Values.quobyte.image }}
-        env:
-          - name: NODENAME
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.name
-          - name: MY_POD_IP
-            valueFrom:
-              fieldRef:
-                fieldPath: status.podIP
-          - name: QUOBYTE_DATA_PORT 
-            value: "7863"
-          - name: QUOBYTE_META_PORT
-            value: "7862"
-          - name: QUOBYTE_REG_PORT 
-            value: "7861"
-          - name: QUOBYTE_API_PORT
-            value: "7860" 
-          - name: QUOBYTE_S3_PORT
-            value: "8484" 
-          - name: QUOBYTE_SERVICE
-            value: registry
-          - name: CLOUD_INSTALL
-            value: "1" 
-          - name: CLUSTER_NS
-            value: {{ .Release.Namespace }}
-          - name: LIMIT_OPEN_FILES
-            value: "{{ .Values.quobyte.maxopenfiles }}"
-          - name: LIMIT_MAX_PROCESSES
-            value: "{{ .Values.quobyte.maxprocs }}"
-        volumeMounts:
-          - name: config
-            mountPath: /etc/quobyte
-          - name: registry
-            mountPath: /var/lib/quobyte/devices/registry
-        command:
-              - /bin/bash
-              - -xc
-              - |
-                touch /etc/quobyte/$QUOBYTE_SERVICE.cfg
-                echo test.device_dir=/var/lib/quobyte/devices >> /etc/quobyte/registry.cfg
-                echo rpc.bind.address=${MY_POD_IP} >> /etc/quobyte/registry.cfg
-                echo hostname=${HOSTNAME} >> /etc/quobyte/registry.cfg
-                NODENUM=$(echo "$NODENAME" | tr -dc "0-9")
-                if [ ! -e /var/lib/quobyte/devices/registry/QUOBYTE_DEV_SETUP ]; then
-                  if [[ $NODENUM == 0 ]]; then
-                    /usr/bin/qbootstrap -y -d /var/lib/quobyte/devices/registry
-                  else
-                    /usr/bin/qmkdev -d -t REGISTRY /var/lib/quobyte/devices/registry
-                  fi
-                fi
+        - name: quobyte-reg-pre
+          image: {{ .Values.quobyte.image }}
+          env:
+            - name: NODENAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: MY_POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: QUOBYTE_DATA_PORT
+              value: "7863"
+            - name: QUOBYTE_META_PORT
+              value: "7862"
+            - name: QUOBYTE_REG_PORT
+              value: "7861"
+            - name: QUOBYTE_API_PORT
+              value: "7860"
+            - name: QUOBYTE_S3_PORT
+              value: "8484"
+            - name: QUOBYTE_SERVICE
+              value: registry
+            - name: CLOUD_INSTALL
+              value: "1"
+            - name: CLUSTER_NS
+              value: {{ .Release.Namespace }}
+            - name: LIMIT_OPEN_FILES
+              value: "{{ .Values.quobyte.maxopenfiles }}"
+            - name: LIMIT_MAX_PROCESSES
+              value: "{{ .Values.quobyte.maxprocs }}"
+          volumeMounts:
+            - name: registry
+              #mountPath: /var/lib/quobyte/devices/registry
+              mountPath: /devices/registry
+          # The first pod will bootstrap a cluster, any other pod will join.
+          command:
+            - /bin/bash
+            - -xc
+            - |
+              NODENUM=$(echo "$NODENAME" | tr -dc "0-9")
+              #test -e /var/lib/quobyte/devices/registry/QUOBYTE_DEV_SETUP && \
+              test -e /devices/registry/QUOBYTE_DEV_SETUP && \
+                exit 0
+              if [[ $NODENUM == 0 ]]; then
+                #/usr/bin/qbootstrap -y -d /var/lib/quobyte/devices/registry
+                /usr/bin/qbootstrap -y -d /devices/registry
+              else
+                #/usr/bin/qmkdev -d -t REGISTRY /var/lib/quobyte/devices/registry
+                /usr/bin/qmkdev -d -t REGISTRY /devices/registry
+              fi
       containers:
-      - name: quobyte-reg
-        image: {{ .Values.quobyte.image }}
-        imagePullPolicy: Always
-        env:
-          - name: NODENAME
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.name
-          - name: MY_POD_IP
-            valueFrom:
-              fieldRef:
-                fieldPath: status.podIP
-          - name: HOST_IP
-            valueFrom:
-              fieldRef:
-                fieldPath: status.podIP
-          - name: QUOBYTE_DATA_PORT 
-            value: "7863"
-          - name: QUOBYTE_META_PORT
-            value: "7862"
-          - name: QUOBYTE_REG_PORT 
-            value: "7861"
-          - name: QUOBYTE_API_PORT
-            value: "7860" 
-          - name: QUOBYTE_S3_PORT
-            value: "8484" 
-          - name: QUOBYTE_SERVICE
-            value: registry
-          - name: CLOUD_INSTALL
-            value: "1" 
-          - name: CLUSTER_NS
-            value: {{ .Release.Namespace }}
-          - name: QUOBYTE_REGISTRY
-            value: _quobyte._tcp.quobyte.{{ .Release.Namespace }}.svc.cluster.local
-          - name: LIMIT_OPEN_FILES
-            value: "{{ .Values.quobyte.maxopenfiles }}"
-          - name: LIMIT_MAX_PROCESSES
-            value: "{{ .Values.quobyte.maxprocs }}"
-        ports:
-        - containerPort: 7861
-          name: quobyte-reg
-        volumeMounts:
-          - name: config
-            mountPath: /etc/quobyte
-          - name: registry
-            mountPath: /var/lib/quobyte/devices/registry
+        - name: quobyte-reg
+          image: {{ .Values.quobyte.image }}
+          imagePullPolicy: Always
+          securityContext:
+            privileged: false 
+          env:
+            - name: SERVICE_UUID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: NODENAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: MY_POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: HOST_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: QUOBYTE_DATA_PORT
+              value: "7863"
+            - name: QUOBYTE_META_PORT
+              value: "7862"
+            - name: QUOBYTE_REG_PORT
+              value: "7861"
+            - name: QUOBYTE_API_PORT
+              value: "7860"
+            - name: QUOBYTE_S3_PORT
+              value: "8484"
+            - name: QUOBYTE_SERVICE
+              value: registry
+            - name: CLOUD_INSTALL
+              value: "1"
+            - name: QUOBYTE_EXTRA_SERVICE_CONFIG
+              value: "constants.deviceInspector.enabled=false"
+            - name: CLUSTER_NS
+              value: {{ .Release.Namespace }}
+            - name: QUOBYTE_REGISTRY
+              value: _quobyte._tcp.quobyte.{{ .Release.Namespace }}.{{ default "svc.cluster.local" .Values.clusterDnsSuffix }}
+            - name: LIMIT_OPEN_FILES
+              value: "{{ .Values.quobyte.maxopenfiles }}"
+            - name: LIMIT_MAX_PROCESSES
+              value: "{{ .Values.quobyte.maxprocs }}"
+            {{- if .Values.quobyte.enable_rdma.registry }}
+            - name: QUOBYTE_ENABLE_RDMA
+              value: "{{ .Values.quobyte.enable_rdma.registry }}"
+            {{- end }}
+            {{- if .Values.quobyte.memory.maxmem.registry }}
+            - name: QUOBYTE_MAX_MEM_REGISTRY
+              value: "{{ .Values.quobyte.memory.maxmem.registry }}"
+            {{- end}}
+            {{- if .Values.quobyte.memory.maxbuffer.other }}
+            - name: QUOBYTE_MAX_BUFFER_OTHER
+              value: "{{ .Values.quobyte.memory.maxbuffer.other }}"
+            {{- end}}
+          ports:
+            - containerPort: 7861
+              name: quobyte-reg
+            - containerPort: 7861
+              name: reg-ping
+              protocol: UDP
+            - containerPort: 7871
+              name: reg-health
+          {{- with .Values.quobyte.resources.registry }}
+          resources:
+            {{- $cpuReq := "" }}
+            {{- $cpuLim := "" }}
+            {{- $memReq := "" }}
+            {{- $memLim := "" }}
+            {{- if .cpu }}
+              {{- if .cpu.requests }}{{- $cpuReq = (.cpu.requests | toString) }}{{- end }}
+              {{- if .cpu.limit }}{{- $cpuLim = (.cpu.limit | toString) }}{{- end }}
+            {{- end }}
+            {{- if .memory }}
+              {{- if .memory.requests }}{{- $memReq = (.memory.requests | toString) }}{{- end }}
+              {{- if .memory.limit }}{{- $memLim = (.memory.limit | toString) }}{{- end }}
+            {{- end }}
+            {{- if or $cpuReq $memReq }}
+            requests:
+              {{- if $cpuReq }}
+              cpu: {{ $cpuReq | quote }}
+              {{- end }}
+              {{- if $memReq }}
+              memory: {{ $memReq | quote }}
+              {{- end }}
+            {{- end }}
+            {{- if or $cpuLim $memLim }}
+            limits:
+              {{- if $cpuLim }}
+              cpu: {{ $cpuLim | quote }}
+              {{- end }}
+              {{- if $memLim }}
+              memory: {{ $memLim | quote }}
+              {{- end }}
+            {{- end }}
+          {{- end }}
+          volumeMounts:
+            - name: registry
+              mountPath: /devices/registry
+          livenessProbe:
+            # Give the system enough time to start two other 
+            # registry services and become fully redundant/ healthy
+            initialDelaySeconds: 70
+            httpGet:
+              path: /serviceHealth
+              port: reg-health
+
       {{- if .Values.nodepoolname }}
       nodeSelector:
            storage-node-pool: {{ .Values.nodepoolname }}
       {{- end }}
       affinity:
         podAntiAffinity:
-            requiredDuringSchedulingIgnoredDuringExecution:
+          requiredDuringSchedulingIgnoredDuringExecution:
             - labelSelector:
                 matchExpressions:
-                - key: app
-                  operator: In
-                  values:
-                  - quobyte-reg
+                  - key: app
+                    operator: In
+                    values:
+                      - quobyte-reg
               topologyKey: "kubernetes.io/hostname"
   volumeClaimTemplates:
-  - metadata:
-      name: config
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      resources:
-        requests:
-          storage: 1Gi
-  - metadata:
-      name: registry
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      resources:
-        requests:
-          storage: 25Gi
-
+    - metadata:
+        name: registry
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: {{ $.Values.quobyte.storageclassRegistry }}
+        resources:
+          requests:
+            storage: 25Gi
+        {{- if eq $.Values.nodepoolname "quobyte-local" }}
+        selector:
+          matchLabels:
+            role: "registry"
+        {{- end }}

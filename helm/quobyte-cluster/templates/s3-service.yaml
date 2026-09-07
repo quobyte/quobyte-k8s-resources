@@ -18,6 +18,12 @@ spec:
       name: "quobyte-s3"
       protocol: "TCP"
       targetPort: 80
+  {{- if .Values.quobyte.s3.enable_https }}
+    - port: 443 
+      name: "quobyte-tls-s3"
+      protocol: "TCP"
+      targetPort: 443
+  {{- end }}
   selector:
     app: quobyte-s3
 

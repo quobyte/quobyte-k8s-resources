@@ -6,163 +6,182 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: quobyte-data # has to match .spec.template.metadata.labels
+      app: quobyte-data  # has to match .spec.template.metadata.labels
   serviceName: "quobyte-data"
   podManagementPolicy: Parallel
   updateStrategy:
     type: RollingUpdate
     rollingUpdate:
       partition: 0 # Optional: default is 0, meaning all pods will be updated sequentially
-  # let some time pass between rolling upgrades to finish catch up tasks etc.
-  minReadySeconds: 180
   replicas: {{ .Values.quobyte.replicas.data }}
+  # let some time pass to finish catch up tasks.
+  minReadySeconds: 180
   template:
     metadata:
       labels:
-        app: quobyte-data # has to match .spec.selector.matchLabels
+        app: quobyte-data  # has to match .spec.selector.matchLabels
       annotations:
         timestamp: "{{ now }}"
     spec:
-      terminationGracePeriodSeconds: 10
+      terminationGracePeriodSeconds: 60
       hostNetwork: {{ .Values.hostNetwork }}
       dnsPolicy: ClusterFirstWithHostNet
-      initContainers:
-      - name: quobyte-data-pre 
-        image: {{ .Values.quobyte.image }}
-        env:
-          - name: NODENAME
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.name
-          - name: MY_POD_IP
-            valueFrom:
-              fieldRef:
-                fieldPath: status.podIP
-          - name: HOST_IP
-            valueFrom:
-              fieldRef:
-                fieldPath: status.podIP
-          - name: QUOBYTE_DATA_PORT 
-            value: "7863"
-          - name: QUOBYTE_META_PORT
-            value: "7862"
-          - name: QUOBYTE_REG_PORT 
-            value: "7861"
-          - name: QUOBYTE_API_PORT
-            value: "7860" 
-          - name: QUOBYTE_S3_PORT
-            value: "8484" 
-          - name: QUOBYTE_SERVICE
-            value: data
-          - name: CLOUD_INSTALL
-            value: "1" 
-          - name: CLUSTER_NS
-            value: {{ .Release.Namespace }}
-          - name: LIMIT_OPEN_FILES
-            value: "{{ .Values.quobyte.maxopenfiles }}"
-          - name: LIMIT_MAX_PROCESSES
-            value: "{{ .Values.quobyte.maxprocs }}"
-        volumeMounts:
-          - name: config
-            mountPath: /etc/quobyte
-          {{- range .Values.quobyte.datadisks }}
-          - name: {{ .name }}
-            mountPath: {{ .mountpoint }}
+      tolerations:
+        - key: {{ .Values.taintKey }}
+          operator: "Exists"
+          effect: "NoSchedule"
+          {{- if .Values.taintValue }}
+          value: {{ .Values.taintValue | quote }}
           {{- end }}
-        command:
-              - /bin/sh 
-              - -xc
-              - |
-                touch /etc/quobyte/$QUOBYTE_SERVICE.cfg
-                echo test.device_dir=/var/lib/quobyte/devices >> /etc/quobyte/data.cfg
-                echo rpc.bind.address=${MY_POD_IP} >> /etc/quobyte/data.cfg
-                echo hostname=${HOSTNAME} >> /etc/quobyte/data.cfg
-                for j in $(ls -d /var/lib/quobyte/devices/data*)
-                do
-                  i=$(basename $j)
-                  if [ ! -e /var/lib/quobyte/devices/${i}/QUOBYTE_DEV_SETUP ];then
-                    /usr/bin/qmkdev -d -t DATA /var/lib/quobyte/devices/${i}
-                  fi
-                done
+          effect: "NoSchedule"
       containers:
-      - name: quobyte-data
-        image: {{ .Values.quobyte.image }}
-        imagePullPolicy: Always
-        env:
-          - name: NODENAME
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.name
-          - name: MY_POD_IP
-            valueFrom:
-              fieldRef:
-                fieldPath: status.podIP
-          - name: HOST_IP
-            valueFrom:
-              fieldRef:
-                fieldPath: status.podIP
-          - name: QUOBYTE_DATA_PORT 
-            value: "7863"
-          - name: QUOBYTE_META_PORT
-            value: "7862"
-          - name: QUOBYTE_REG_PORT 
-            value: "7861"
-          - name: QUOBYTE_API_PORT
-            value: "7860" 
-          - name: QUOBYTE_S3_PORT
-            value: "8484" 
-          - name: QUOBYTE_SERVICE
-            value: data
-          - name: CLOUD_INSTALL
-            value: "1" 
-          - name: CLUSTER_NS
-            value: {{ .Release.Namespace }}
-          - name: QUOBYTE_REGISTRY
-            value: _quobyte._tcp.quobyte.{{ .Release.Namespace }}.svc.cluster.local
-          - name: LIMIT_OPEN_FILES
-            value: "{{ .Values.quobyte.maxopenfiles }}"
-          - name: LIMIT_MAX_PROCESSES
-            value: "{{ .Values.quobyte.maxprocs }}"
-        ports:
-        - containerPort: 7863
-          name: quobyte-data
-        volumeMounts:
-          - name: config
-            mountPath: /etc/quobyte
-          {{- range .Values.quobyte.datadisks }}
-          - name: {{ .name }}
-            mountPath: {{ .mountpoint }}
+        - name: quobyte-data
+          image: {{ .Values.quobyte.image }}
+          imagePullPolicy: Always
+          securityContext:
+            privileged: true
+          env:
+            - name: SERVICE_UUID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: NODENAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: MY_POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: HOST_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: QUOBYTE_DATA_PORT
+              value: "7863"
+            - name: QUOBYTE_META_PORT
+              value: "7862"
+            - name: QUOBYTE_REG_PORT
+              value: "7861"
+            - name: QUOBYTE_API_PORT
+              value: "7860"
+            - name: QUOBYTE_S3_PORT
+              value: "8484"
+            - name: QUOBYTE_SERVICE
+              value: data
+            - name: CLOUD_INSTALL
+              value: "1"
+            - name: CLUSTER_NS
+              value: {{ .Release.Namespace }}
+            - name: QUOBYTE_REGISTRY
+              value: _quobyte._tcp.quobyte.{{ .Release.Namespace }}.{{ default "svc.cluster.local" .Values.clusterDnsSuffix }}
+            - name: LIMIT_OPEN_FILES
+              value: "{{ .Values.quobyte.maxopenfiles }}"
+            - name: LIMIT_MAX_PROCESSES
+              value: "{{ .Values.quobyte.maxprocs }}"
+            {{- if .Values.quobyte.enable_rdma.data }}
+            - name: QUOBYTE_ENABLE_RDMA
+              value: "{{ .Values.quobyte.enable_rdma.data }}"
+            {{- end }}
+            {{- if .Values.quobyte.memory.maxmem.data }}
+            - name: QUOBYTE_MAX_MEM_DATA
+              value: "{{ .Values.quobyte.memory.maxmem.data }}"
+            {{- end}}
+            {{- if .Values.quobyte.memory.maxbuffer.data }}
+            - name: QUOBYTE_MAX_BUFFER_DATA
+              value: "{{ .Values.quobyte.memory.maxbuffer.data }}"
+            {{- end}}
+          # work around check in /opt/main
+          volumeMounts:
+            - name: workaround
+              mountPath: /devices
+            - name: dev-disk
+              mountPath: /dev/disk
+            - name: host-udev
+              mountPath: /run/udev
+            - name: var-lib-quobyte
+              mountPath: /var/lib/quobyte
+              mountPropagation: Bidirectional
+          ports:
+            - containerPort: 7863
+              name: quobyte-data
+            - containerPort: 7863
+              name: data-ping
+              protocol: UDP
+            - containerPort: 7873
+              name: data-health
+          livenessProbe:
+            # Give the system enough time to start two other 
+            # registry services and become fully redundant/ healthy
+            initialDelaySeconds: 70
+            httpGet:
+              path: /serviceHealth
+              port: data-health
+          {{- with .Values.quobyte.resources.data }}
+          resources:
+            {{- $cpuReq := "" }}
+            {{- $cpuLim := "" }}
+            {{- $memReq := "" }}
+            {{- $memLim := "" }}
+            {{- if .cpu }}
+              {{- if .cpu.requests }}{{- $cpuReq = (.cpu.requests | toString) }}{{- end }}
+              {{- if .cpu.limit }}{{- $cpuLim = (.cpu.limit | toString) }}{{- end }}
+            {{- end }}
+            {{- if .memory }}
+              {{- if .memory.requests }}{{- $memReq = (.memory.requests | toString) }}{{- end }}
+              {{- if .memory.limit }}{{- $memLim = (.memory.limit | toString) }}{{- end }}
+            {{- end }}
+            {{- if or $cpuReq $memReq }}
+            requests:
+              {{- if $cpuReq }}
+              cpu: {{ $cpuReq | quote }}
+              {{- end }}
+              {{- if $memReq }}
+              memory: {{ $memReq | quote }}
+              {{- end }}
+            {{- end }}
+            {{- if or $cpuLim $memLim }}
+            limits:
+              {{- if $cpuLim }}
+              cpu: {{ $cpuLim | quote }}
+              {{- end }}
+              {{- if $memLim }}
+              memory: {{ $memLim | quote }}
+              {{- end }}
+            {{- end }}
           {{- end }}
+
+      volumes:
+        - hostPath:
+            # work around check in /opt/main.sh
+            path: /tmp
+            type: ""
+          name: workaround
+        - hostPath:
+            path: /dev/disk
+            type: ""
+          name: dev-disk
+        - hostPath:
+            path: /run/udev
+            type: ""
+          name: host-udev
+        # services need a place for a common lock file per node
+        - hostPath:
+            path: /var/lib/quobyte/
+            type: ""
+          name: var-lib-quobyte
+
       {{- if .Values.nodepoolname }}
       nodeSelector:
-           storage-node-pool: {{ .Values.nodepoolname }}
+         storage-node-pool: {{ .Values.nodepoolname }}
       {{- end }}
       affinity:
         podAntiAffinity:
-            requiredDuringSchedulingIgnoredDuringExecution:
+          requiredDuringSchedulingIgnoredDuringExecution:
             - labelSelector:
                 matchExpressions:
-                - key: app
-                  operator: In
-                  values:
-                  - quobyte-data
+                  - key: app
+                    operator: In
+                    values:
+                      - quobyte-data
               topologyKey: "kubernetes.io/hostname"
-  volumeClaimTemplates:
-  - metadata:
-      name: config
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      resources:
-        requests:
-          storage: 10Gi
-{{- range .Values.quobyte.datadisks }}
-  - metadata:
-      name: {{ .name }}
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      storageClassName: "faster"
-      resources:
-        requests:
-          storage: {{ .size }}
-{{- end }}
-

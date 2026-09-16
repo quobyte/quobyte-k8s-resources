@@ -17,5 +17,5 @@ name: quobyte-cluster
 sources:
 - https://github.com/quobyte/quobyte-k8s-resources
 type: application
-version: 1.0.0
+version: 1.0.1
 

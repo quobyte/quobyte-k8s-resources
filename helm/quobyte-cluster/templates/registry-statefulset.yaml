@@ -94,7 +94,7 @@ spec:
           image: {{ .Values.quobyte.image }}
           imagePullPolicy: Always
           securityContext:
-            privileged: false 
+            privileged: true 
           env:
             - name: SERVICE_UUID
               valueFrom:

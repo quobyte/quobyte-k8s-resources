@@ -106,6 +106,7 @@ spec:
             exec:
               command: ["/bin/bash", "-xc", "umount -l ${QUOBYTE_MOUNT_POINT}"]
       hostNetwork: {{ .Values.hostNetwork }}
+      dnsPolicy: ClusterFirstWithHostNet
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

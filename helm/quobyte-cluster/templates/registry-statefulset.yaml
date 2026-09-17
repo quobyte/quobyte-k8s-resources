@@ -23,8 +23,6 @@ spec:
     metadata:
       labels:
         app: quobyte-reg  # has to match .spec.selector.matchLabels
-      annotations:
-        timestamp: "{{ now }}"
     spec:
       subdomain: "quobyte"
       terminationGracePeriodSeconds: 60

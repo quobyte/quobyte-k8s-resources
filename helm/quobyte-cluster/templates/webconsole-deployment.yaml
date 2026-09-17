@@ -12,8 +12,6 @@ spec:
     metadata:
       labels:
         app: quobyte-web  # has to match .spec.selector.matchLabels
-      annotations:
-        timestamp: "{{ now }}"
     spec:
       terminationGracePeriodSeconds: 10
       hostNetwork: {{ .Values.hostNetwork }}

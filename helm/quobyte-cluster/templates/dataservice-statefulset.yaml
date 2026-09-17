@@ -33,7 +33,6 @@ spec:
           {{- if .Values.taintValue }}
           value: {{ .Values.taintValue | quote }}
           {{- end }}
-          effect: "NoSchedule"
       containers:
         - name: quobyte-data
           image: {{ .Values.quobyte.image }}

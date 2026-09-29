@@ -1,3 +1,13 @@
+{{/*
+Pod-killer cache Service name, suffixed with the sanitized csiProvisionerName so multiple
+chart installs (multiple Quobyte clusters) don't collide on the same Service name. Service
+names must be valid RFC 1035 DNS labels (63 chars max), so the result is truncated and any
+trailing "-" left by truncation is trimmed to keep it a valid label.
+*/}}
+{{- define "quobyte-csi-driver.podKiller.cacheServiceName" -}}
+{{- printf "quobyte-pod-killer-cache-%s" (.Values.quobyte.csiProvisionerName | replace "." "-") | trunc 63 | trimSuffix "-" -}}
+{{- end }}
+
 {{- define "quobyte-csi-driver.podKiller.cachePod" }}
 {{- if .Values.quobyte.podKiller.enable }}
 ---
@@ -37,7 +47,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: quobyte-pod-killer-cache
+  name: {{ include "quobyte-csi-driver.podKiller.cacheServiceName" . }}
   namespace: kube-system
 spec:
   selector:

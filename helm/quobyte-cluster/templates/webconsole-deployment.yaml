@@ -72,6 +72,13 @@ spec:
               protocol: UDP
             - containerPort: 7876
               name: web-health
+          livenessProbe:
+            # Give the system enough time to start two other
+            # registry services and become fully redundant/ healthy
+            initialDelaySeconds: 70
+            httpGet:
+              path: /serviceHealth
+              port: api-health
           {{- with .Values.quobyte.resources.webconsole }}
           resources:
             {{- $cpuReq := "" }}

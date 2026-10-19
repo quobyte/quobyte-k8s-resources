@@ -107,6 +107,13 @@ spec:
               protocol: UDP
             - containerPort: 7874
               name: s3-health
+          livenessProbe:
+            # Give the system enough time to start two other
+            # registry services and become fully redundant/ healthy
+            initialDelaySeconds: 70
+            httpGet:
+              path: /serviceHealth
+              port: s3-health
           {{- if .Values.quobyte.enable_rdma.s3 }}
           securityContext:
             privileged: true

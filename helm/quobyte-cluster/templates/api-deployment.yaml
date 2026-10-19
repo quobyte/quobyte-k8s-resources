@@ -68,8 +68,15 @@ spec:
             - containerPort: 7860
               name: api-ping
               protocol: UDP
-            - containerPort: 7870
+            - containerPort: 7875
               name: api-health
+          livenessProbe:
+            # Give the system enough time to start two other
+            # registry services and become fully redundant/ healthy
+            initialDelaySeconds: 70
+            httpGet:
+              path: /serviceHealth
+              port: api-health
           {{- with .Values.quobyte.resources.api }}
           resources:
             {{- $cpuReq := "" }}

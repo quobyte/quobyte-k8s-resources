@@ -7,35 +7,16 @@
 
 ## Install Quobyte CSI Driver
 
-1. Add Quobyte CSI Driver to your helm repositories
+This Helm Chart can be installed as usual:
 
-    ```bash
-    helm repo add quobyte https://quobyte.github.io/quobyte-k8s-resources/helm-charts
-    ```
+``` 
+helm install my-storage-csi oci://quay.io/quobyte/charts/quobyte-csi --version <version> [overrides]
+``` 
 
-2. List all available versions
-
-    ```bash
-    helm search repo quobyte/quobyte-csi -l
-    ```
-
-3. Explore version with helm
-
-    ```bash
-    helm show <helm> quobyte/quobyte-csi --version <csi-driver-version>
-    ```
-
-4. List available configuration options of the chosen Quobyte CSI driver version
-
-    ```bash
-       helm show values quobyte/quobyte-csi --version <csi-driver-version>
-    ```
-
-5. Install Quobyte CSI driver by overriding values with `-f <your-configured-values.yaml>`
-
-    ```bash
-      helm install ... -f <your-configured-values.yaml> --version <csi-driver-version>
-    ```
+To see all available chart values for the Quobyte csi Helm chart:
+``` 
+helm show values oci://quay.io/quobyte/charts/quobyte-csi
+``` 
 
 ## Quobyte CSI logs collector
 

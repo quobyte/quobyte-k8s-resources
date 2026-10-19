@@ -27,8 +27,8 @@ helm show values oci://quay.io/quobyte/charts/<myChart> --version <version>
 Install a chart version with
 
 ```
-helm install oci://quay.io/quobyte/charts/quobyte-csi --version <version> [overrides]
-helm install oci://quay.io/quobyte/charts/quobyte-client --version <version> [overrides]
+helm install my-storage-csi oci://quay.io/quobyte/charts/quobyte-csi --version <version> [overrides]
+helm install my-storage-client oci://quay.io/quobyte/charts/quobyte-client --version <version> [overrides]
 ```
 
 ## Providing Storage

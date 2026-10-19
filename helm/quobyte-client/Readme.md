@@ -11,6 +11,11 @@ This Helm Chart can be installed as usual:
 helm install my-storage-client oci://quay.io/quobyte/charts/quobyte-client --version <version> [overrides]
 ``` 
 
+To see all available chart values for the Quobyte client Helm chart:
+``` 
+helm show values oci://quay.io/quobyte/charts/quobyte-client
+``` 
+
 ## Restrict client pods to a single NUMA node
 
 1. Enable following feature gates in the kubelet configuration on all the k8s hosts

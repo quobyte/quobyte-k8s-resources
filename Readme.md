@@ -41,4 +41,3 @@ helm install my-storage-cluster oci://quay.io/quobyte/charts/quobyte-cluster --v
 Please have a look at [requirements document](Requirements.md) if you consider to run Quobyte for production workloads.
 
 
-To see all available chart values for a specific chart:

@@ -8,9 +8,7 @@ and consume persistent storage from containers.
 This Helm Chart can be installed as usual:
 
 ``` 
-helm repo add quobyte https://quobyte.github.io/quobyte-k8s-resources/helm-charts
-helm repo update
-helm install my-storage-client quobyte/quobyte-client
+helm install my-storage-client oci://quay.io/quobyte/charts/quobyte-client --version <version> [overrides]
 ``` 
 
 ## Restrict client pods to a single NUMA node
